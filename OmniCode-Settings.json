@@ -1,0 +1,6 @@
+{
+	"ActivateCSSEditor_doc": "Set it to 'true' in order to enable OmniCode CSS editor for .css files and <style> tags",
+	"ActivateCSSEditor": true,
+	"AutoCollapseTIS_doc": "Whenever you open a file containing TIScript, choose wheter you want function blocks to shown automatically collapsed/outlined: 'never', 'functions', 'functions_or_closures', 'inner_functions', 'inner_functions_or_closures'",
+	"AutoCollapseTIS": "functions_or_closures"
+}

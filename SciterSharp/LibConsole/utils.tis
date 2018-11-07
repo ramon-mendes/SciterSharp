@@ -1,0 +1,274 @@
+namespace Utils
+{
+	const IsWindows = System.PLATFORM == #Windows;
+	const IsLinux = System.PLATFORM == #Linux;
+	const IsOSX = System.PLATFORM == #OSX;
+	//const IsOSX_UI = view.mediaVars()["os-vendor"] == "Apple";
+	property InDBGView(val) { get { return !!View.omni || !!View.omniview; } }
+	const SciterVersion = String.printf("%d.%d.%d.%d", 
+		(Sciter.VERSION >> 16) & 0xffff, Sciter.VERSION & 0xffff,
+		(Sciter.REVISION >> 16) & 0xffff, Sciter.REVISION & 0xffff);
+
+	function popupAttachment(anchorPoint = 1, popupPoint = 7)// 1, 7 is the most common
+	{
+		return (popupPoint << 16) | anchorPoint;
+	}
+
+	function fileExists(path)
+	{
+		var stream = Stream.openFile(path, "r");
+		if(stream === null)
+			return false;
+		stream.close();
+		return true;
+	}
+
+	function readFileText(path)
+	{
+		var stream = Stream.openFile(path);
+		var ret = readStreamToEnd(stream);
+		stream.close();
+		return ret;
+	}
+
+	function writeFileText(path, data)
+	{
+		assert(typeof(data)==#string);
+
+		var stream = Stream.openFile(path, "w+");
+		stream.print(data);
+		stream.close();
+	}
+
+	function writeFileBytes(path, bytes)
+	{
+		bytes.save(path);
+	}
+
+
+	function readStreamToEnd(stream)
+	{
+		var txt = "";
+		var ln;
+		while((ln = stream.readln()) !== undefined)
+			txt += ln + "\n";
+		return txt;
+	}
+
+	function removeFile(path)
+	{
+		if(IsWindows)
+			return exec("cmd", "/c", "del " + path.replace("/", "\\"));
+		else
+			return exec("rm", path);
+	}
+
+	function exec(args..)
+	{
+		var prom = promise();
+		var out = "";
+
+		var proc = System.Process.exec.apply(proc, args);
+		proc << event stdout (text) { out += text; log(text); }
+		proc << event stderr (text) { out += text; log(text); }
+		proc << event terminate(status) {
+			if( status == 0 ) prom(true,[out]);
+			else prom(false,[out]);
+		}
+		return prom;
+	}
+
+
+	// Makes clicking in <a href="XYZ"> open the browser, and so to not do navigating inside the Sciter engine
+	// ex.: Utils.installLinkHandler(self);
+	//
+	// Does work for a parent frame, so Utils.installLinkHandler($(frame))
+	function installLinkHandler(el)
+	{
+		el.on("~click", "a[href]", function(evt) {
+			if(evt.target.@#href)
+				Sciter.launch(evt.target.@#href);
+			return true;
+		});
+	}
+
+	function revealPath(path)
+	{
+		assert(path);
+		if(Utils.IsWindows)
+			System.exec("explorer.exe", "/select," + path.replace("/", "\\"));
+			//Utils.exec("explorer.exe", "/select," + path.replace("/", "\\"));
+		else if(Utils.IsOSX)
+			Utils.exec("open", "-R", path);
+	}
+
+	function emulateMoveWnd(el)
+	{
+		assert(el);
+
+		var moving = false;
+		var offX, offY;
+
+		el.on("mousedown", function(evt) {
+			moving = true;
+			this.capture(#strict);
+			offX = evt.xView;
+			offY = evt.yView;
+		});
+		el.on("mouseup", function(evt) {
+			if(moving)
+			{
+				moving = false;
+				this.capture(false);
+			}
+		});
+		el.on("mousemove", function(evt) {
+			if(moving)
+				view.move(evt.xScreen - offX, evt.yScreen - offY);
+		});
+	}
+
+	function emulateResizeWnd(el, edge)
+	{
+		assert([1,2,3,6,9,8,7,4].indexOf(edge) != -1);
+
+		var resizing = false;
+		var startX, startY;
+		var offX, offY;
+		var (x,y,width,height);
+
+		el.on("mousedown", function(evt) {
+			(x,y,width,height) = view.box(#rectw, #border, #screen);
+
+			resizing = true;
+			this.capture(#strict);
+			startX = evt.xScreen;
+			startY = evt.yScreen;
+			offX = evt.xScreen - x;
+			offY = evt.yScreen - y;
+		});
+		el.on("mouseup", function(evt) {
+			if(resizing)
+			{
+				resizing = false;
+				this.capture(false);
+			}
+		});
+		el.on("mousemove", function(evt) {
+			if(!resizing)
+				return;
+
+			switch(edge)
+			{
+				case 7:
+				{
+					var addw = startX - evt.xScreen
+					var addh = startY - evt.yScreen;
+					view.move(evt.xScreen - offX, evt.yScreen - offY, width + addw, height + addh);
+					break;
+				}
+				case 8:
+				{
+					var addh = startY - evt.yScreen;
+					view.move(x, evt.yScreen - offY, width, height + addh);
+					break;
+				}
+				case 2:
+				{
+					var addh = startY - evt.yScreen;
+					view.move(x, y, width, height - addh);
+					break;
+				}
+				default:
+					assert(false, "NYI");
+					break;
+			}
+		});
+	}
+
+	function shuffle(array)
+	{
+		var currentIndex = array.length, temporaryValue, randomIndex;
+
+		// While there remain elements to shuffle...
+		while (0 !== currentIndex)
+		{
+			// Pick a remaining element...
+			randomIndex = Math.floor(Math.random() * currentIndex).toInteger();
+			currentIndex -= 1;
+
+			// And swap it with the current element.
+			temporaryValue = array[currentIndex];
+			array[currentIndex] = array[randomIndex];
+			array[randomIndex] = temporaryValue;
+		}
+
+		return array;
+	}
+}
+
+function Element.tagname()
+{
+	var name = this.tag;
+	var id = this.id;
+	var classes = this.@#class;
+	if(id)
+		name += "#" + id;
+	if(classes)
+		name += "." + classes.split(" ").join(".");
+
+	for(var attr in this.attributes)
+	{
+		var val = this.attributes[attr];
+		if(val != undefined)
+			name += "[" + attr + "=" + val + "]";
+		else
+			name += "[" + attr + "]";
+	}
+
+	return "<" + name + ">";
+}
+function Element.hide()
+{
+	this.style#visibility = "none";
+}
+function Element.show()
+{
+	this.style#visibility = "visible";
+}
+function Element.toggle()
+{
+	this.style#visibility = this.isVisible ? "none" : "visible";
+}
+
+function Element.asViewMoveHandler()
+{
+	var captured = false;
+	var offx;
+	var offy;
+
+	this.onMouse = function(evt) {
+		if(captured)
+		{
+			if(evt.type == Event.MOUSE_MOVE)
+			{
+				view.move(evt.xScreen - offx, evt.yScreen - offy);
+			}
+			else if(evt.type == Event.MOUSE_UP || evt.type == Event.MOUSE_LEAVE)
+			{
+				this.capture(false);
+				captured = false;
+			}
+		} else {
+			if(evt.type == Event.MOUSE_DOWN)
+			{
+				var (x,y) = view.box(#position, #border, #screen);
+				offx = evt.xScreen - x;
+				offy = evt.yScreen - y;
+
+				captured = true;
+				this.capture(#strict);
+			}
+		}
+	};
+}

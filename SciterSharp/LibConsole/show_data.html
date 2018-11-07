@@ -1,0 +1,535 @@
+﻿<!-- OmniView:on -->
+<html window-resizable>
+<head>
+	<title>console.show() inspector</title>
+
+	<script type="text/tiscript">
+		self.onKey = function(evt) {
+			if(evt.type == Event.KEY_DOWN && evt.keyCode == Event.VK_ESCAPE)
+				view.close();
+		};
+		//view.parameters = view.mediaVars();
+
+		class DataTree : Behavior
+		{
+			function attached()
+			{
+				if(view.parameters)
+					this.expandOptionData(this, 0, view.parameters);
+			}
+			
+			function expandOptionData(el_parent, ideep, data)
+			{
+				function appendOption(el_parent, vdisplay)
+				{
+					var el_opt = el_parent.$append(<option/>);
+					var el_div = el_opt.append("<div>" + vdisplay + "</div>");
+					return el_opt;
+				}
+				function appendCompositeOption(el_parent, vdisplay, data)
+				{
+					var el_opt = appendOption(el_parent, vdisplay);
+					if(data!=undefined)
+					{
+						el_opt.state.collapsed = true;
+						el_opt.ideep = ideep+1;
+						el_opt.vdata = data;
+					}
+				}
+
+				switch(typeof data)
+				{
+				case #array:
+					if(data.length==0)
+					{
+						var el_opt = appendOption(el_parent, "<span.empty>empty</span>");
+						break;
+					}
+
+					for(var (i, item) in data)
+					{
+						var (vcomposite, vdisplay) = getValueDisplay(item);
+						vdisplay = "<span.field>[" + i.toString() + "]:</span> " + vdisplay;
+
+						if(vcomposite)
+							appendCompositeOption(el_parent, vdisplay, item);
+						else
+							appendOption(el_parent, vdisplay);
+					}
+					break;
+
+				case #object:
+					{
+						// get fields
+						var arr_kv = [];
+						for(var (k,v) in data)
+							arr_kv.push([k, v]);
+
+						if(data.length==0)
+						{
+							var el_opt = appendOption(el_parent, "<span.empty>empty</span>");
+							break;
+						}
+
+						// sort and show fields
+						arr_kv = arr_kv.sort();
+						for(var kv in arr_kv)
+						{
+							var (vcomposite, vdisplay);
+							(vcomposite, vdisplay) = getValueDisplay(kv[1]);
+							if(vcomposite == vdisplay)// FIXME
+								vcomposite = false;
+							vdisplay = "<span.field>" + kv[0] + ": </span> " + vdisplay;
+
+							if(vcomposite && vcomposite != vdisplay)
+								appendCompositeOption(el_parent, vdisplay, kv[1]);
+							else
+								appendOption(el_parent, vdisplay);
+						}
+						break;
+					}
+
+				case #Node:
+					// membersOf
+					appendCompositeOption(el_parent, "<span.pseudo>membersOf</span>", membersOf(data));
+					{
+						var (vcomposite, vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.parent);
+						appendCompositeOption(el_parent, "<span.field>parent:</span> " + vdisplay, data.parent);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.nodeIndex);
+						appendOption(el_parent, "<span.field>nodeIndex:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.nextNode);
+						appendCompositeOption(el_parent, "<span.field>nextNode:</span> " + vdisplay, data.nextNode);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.priorNode);
+						appendCompositeOption(el_parent, "<span.field>priorNode:</span> " + vdisplay, data.priorNode);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.text);
+						appendOption(el_parent, "<span.field>text:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.isElement);
+						appendOption(el_parent, "<span.field>isElement:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.isText);
+						appendOption(el_parent, "<span.field>isText:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.isComment);
+						appendOption(el_parent, "<span.field>isComment:</span> " + vdisplay);
+					}
+					break;
+
+				case #Element:
+					if(data.length)
+					{
+						var arr = [];
+						for(var el in data)
+							arr.push(el);
+
+						appendCompositeOption(el_parent, "<span.pseudo>DOM childs[" + data.length + "]</span>", arr);
+					}
+
+					// membersOf
+					appendCompositeOption(el_parent, "<span.pseudo>membersOf</span>", membersOf(data));
+
+					{
+						var (vcomposite, vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.length);
+						appendOption(el_parent, "<span.field>length:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.uid);
+						appendOption(el_parent, "<span.field>uid:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.root);
+						appendCompositeOption(el_parent, "<span.field>root:</span> " + vdisplay, data.root);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.parent);
+						appendCompositeOption(el_parent, "<span.field>parent:</span> " + vdisplay, data.parent);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.layoutParent);
+						appendCompositeOption(el_parent, "<span.field>layoutParent:</span> " + vdisplay, data.layoutParent);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.owner);
+						appendCompositeOption(el_parent, "<span.field>owner:</span> " + vdisplay, data.owner);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.index);
+						appendOption(el_parent, "<span.field>index:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.tag);
+						appendOption(el_parent, "<span.field>tag:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.id);
+						appendOption(el_parent, "<span.field>id:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.next);
+						appendCompositeOption(el_parent, "<span.field>next:</span> " + vdisplay, data.next);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.prior);
+						appendCompositeOption(el_parent, "<span.field>prior:</span> " + vdisplay, data.prior);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.first);
+						appendCompositeOption(el_parent, "<span.field>first:</span> " + vdisplay, data.first);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.last);
+						appendCompositeOption(el_parent, "<span.field>last:</span> " + vdisplay, data.last);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.attributes);
+						appendOption(el_parent, "<span.field>attributes:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.style);
+						appendOption(el_parent, "<span.field>style:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.state);
+						appendOption(el_parent, "<span.field>state:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.x);
+						appendOption(el_parent, "<span.field>x:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.text);
+						appendOption(el_parent, "<span.field>text:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.html);
+						appendOption(el_parent, "<span.field>html:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.outerHtml);
+						appendOption(el_parent, "<span.field>outerHtml:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.value);
+						appendOption(el_parent, "<span.field>value:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.prototype);
+						appendOption(el_parent, "<span.field>prototype:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.isVisible);
+						appendOption(el_parent, "<span.field>isVisible:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.isEnabled);
+						appendOption(el_parent, "<span.field>isEnabled:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.ns);
+						appendOption(el_parent, "<span.field>ns:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.rows);
+						appendOption(el_parent, "<span.field>rows:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.columns);
+						appendOption(el_parent, "<span.field>columns:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.options);
+						appendCompositeOption(el_parent, "<span.field>options:</span> " + vdisplay, data.options);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.contentModel);
+						appendOption(el_parent, "<span.field>contentModel:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.selection);
+						appendOption(el_parent, "<span.field>selection:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.firstCaretPos);
+						appendOption(el_parent, "<span.field>firstCaretPos:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.lastCaretPos);
+						appendOption(el_parent, "<span.field>lastCaretPos:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.paintBackground);
+						appendOption(el_parent, "<span.field>paintBackground:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.paintContent);
+						appendOption(el_parent, "<span.field>paintContent:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.paintForeground);
+						appendOption(el_parent, "<span.field>paintForeground:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.paintOutline);
+						appendOption(el_parent, "<span.field>paintOutline:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.nodeIndex);
+						appendOption(el_parent, "<span.field>nodeIndex:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.nextNode);
+						appendCompositeOption(el_parent, "<span.field>nextNode:</span> " + vdisplay, data.nextNode);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.priorNode);
+						appendCompositeOption(el_parent, "<span.field>priorNode:</span> " + vdisplay, data.priorNode);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.firstNode);
+						appendCompositeOption(el_parent, "<span.field>firstNode:</span> " + vdisplay, data.firstNode);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.lastNode);
+						appendCompositeOption(el_parent, "<span.field>lastNode:</span> " + vdisplay, data.lastNode);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.isElement);
+						appendOption(el_parent, "<span.field>isElement:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.isText);
+						appendOption(el_parent, "<span.field>isText:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.isComment);
+						appendOption(el_parent, "<span.field>isComment:</span> " + vdisplay);
+					}
+					break;
+
+				case #function:
+					// membersOf
+					appendCompositeOption(el_parent, "<span.pseudo>membersOf</span>", membersOf(data));
+					break;
+
+				case #Event:
+					{
+						var (vcomposite, vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.data);
+						if(vcomposite)
+							appendOption(el_parent, "<span.field>data:</span> " + vdisplay);
+						else
+							appendCompositeOption(el_parent, "<span.field>data:</span> " + vdisplay, data.data);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.type);
+						appendOption(el_parent, "<span.field>type:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.altKey);
+						appendOption(el_parent, "<span.field>altKey:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.ctrlKey);
+						appendOption(el_parent, "<span.field>ctrlKey:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.shiftKey);
+						appendOption(el_parent, "<span.field>shiftKey:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.shortcutKey);
+						appendOption(el_parent, "<span.field>shortcutKey:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.commandKey);
+						appendOption(el_parent, "<span.field>commandKey:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.mainButton);
+						appendOption(el_parent, "<span.field>mainButton:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.propButton);
+						appendOption(el_parent, "<span.field>propButton:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.buttons);
+						appendOption(el_parent, "<span.field>buttons:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.target);
+						appendCompositeOption(el_parent, "<span.field>target:</span> " + vdisplay, data.target);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.reason);
+						appendOption(el_parent, "<span.field>reason:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.keyCode);
+						appendOption(el_parent, "<span.field>keyCode:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.group);
+						appendOption(el_parent, "<span.field>group:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.wheelDelta);
+						appendOption(el_parent, "<span.field>wheelDelta:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.scrollPos);
+						appendOption(el_parent, "<span.field>scrollPos:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.scrollAxis);
+						appendOption(el_parent, "<span.field>scrollAxis:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.x);
+						appendOption(el_parent, "<span.field>x:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.y);
+						appendOption(el_parent, "<span.field>y:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.xRoot);
+						appendOption(el_parent, "<span.field>xRoot:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.yRoot);
+						appendOption(el_parent, "<span.field>yRoot:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.xView);
+						appendOption(el_parent, "<span.field>xView:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.yView);
+						appendOption(el_parent, "<span.field>yView:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.xScreen);
+						appendOption(el_parent, "<span.field>yView:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.yScreen);
+						appendOption(el_parent, "<span.field>yView:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.owner);
+						appendCompositeOption(el_parent, "<span.field>owner:</span> " + vdisplay, data.owner);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.isOnIcon);
+						appendOption(el_parent, "<span.field>isOnIcon:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.dragging);
+						appendOption(el_parent, "<span.field>dragging:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.draggingMode);
+						appendOption(el_parent, "<span.field>draggingMode:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay(data.draggingDataType);
+						appendOption(el_parent, "<span.field>draggingDataType:</span> " + vdisplay);
+
+						(vcomposite, vdisplay) = getValueDisplay("" + deltaV + " " + deltaX + " " + deltaY + " " + flags);
+						appendOption(el_parent, "<span.field>deltaV, deltaX, deltaY, flags:</span> " + vdisplay);
+					}
+					break;
+
+				default:
+					{
+						var (vcomposite, vdisplay) = getValueDisplay(data);
+						assert(vcomposite==false);
+						var el_opt = appendOption(el_parent, vdisplay);
+					}
+					break;
+				}
+			}
+
+			function getValueDisplay(val)
+			{
+				switch(typeof val)
+				{
+				case #array:
+					return (true, "<span>Array[" + val.length + "]</span>");
+
+				case #object:
+					if(val==null)
+						return (false, "<span>null</span>");
+					else
+						return (true, "<span>Object</span>");
+
+				case #Element:
+				{
+					var tag = val.tagname().htmlEscape();
+					return (true, "<span>Element</span> <span.val>" + tag + "</span>");
+				}
+
+				case #event:
+					return (true, "<span>" + val.toString() + "</span>");
+
+				case #undefined:
+					return (false, "undefined");
+
+				case #function:// has no toString()
+					return (false, "<span.val>" + val.fullName + "</span><span.typeof>#" + typeof val + "</span>");
+
+				case #Image:
+					return (false, "<span>Image</span> <span.val>" + val.width + "x" + val.height + "</span>");
+				}
+				return (false, "<span.val>" + String.$({val}).htmlEscape() + "</span><span.typeof>#" + typeof val + "</span>");
+			}
+
+
+			// Events
+			function onMouse(evt)
+			{
+				if(evt.type==Event.MOUSE_DOWN)
+				{
+					var el_opt = evt.target.$p(option);
+					if(el_opt)
+						this.toggleExpansion(el_opt);
+					//return true;// COOL: avoids double SELECT_SELECTION_CHANGED
+				}
+			}
+
+			function toggleExpansion(el_opt)
+			{
+				if(el_opt.vdata)
+				{
+					if(el_opt.state.collapsed)
+					{
+						this.expandOptionData(el_opt, el_opt.ideep, el_opt.vdata);// expanding <option>
+						el_opt.state.expanded = true;
+					} else {
+						for(var el_rmv in el_opt.$$(option))
+							el_rmv.remove();
+						el_opt.state.collapsed = true;
+					}
+				}
+			}
+		}
+	</script>
+
+	<style>
+		@import url(popup.css);
+
+		select.data-tree
+		{
+			prototype: DataTree;
+			style-set: DataTreeSet;
+		}
+
+		@set DataTreeSet
+		{
+			:root
+			{
+				display: block;
+				size: *;
+				padding: 0;
+				overflow-y: scroll-indicator;
+
+				font-size: 12px;
+				color: #0a3860;
+				//border: solid 3px blue;
+			}
+
+			option
+			{
+				margin-left: 7px;
+			}
+
+			:root > option
+			{
+				margin: 0;
+			}
+
+			option > div
+			{
+				padding: 1px 0;
+				padding-left: 20px;
+				foreground-size: 10px;
+				foreground-repeat: no-repeat;
+				foreground-position: 5px 4px;
+				foreground-image-cursor: pointer;
+				white-space: nowrap;
+			}
+
+			option:hover > div
+			{
+				background: #d4e7f4;
+			}
+
+			:root:focus option:current > div
+			{
+				background: #4c9ed9;
+				color: #f5f7fa;
+			}
+
+			option > div > span { display: inline-block; color: #18191a; }
+			option > div > span.val { color: #6e8900; max-width: *; overflow-x: *; }
+			option > div > span.typeof { float: right; padding-right: 5px; color: gray; }
+			option > div > span.empty { color: silver; font-style: italic; }
+			option > div > span.pseudo {}
+			:root:focus option:current > div, :root:focus option:current > div > span { color: #f5f7fa; }
+
+			option > option { display: none; }
+			option:collapsed > div { foreground-image: url( data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NDU3RjU4N0ZDRENBMTFFNDk3QUJCQjJCNjU2NjA0RjAiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NDU3RjU4ODBDRENBMTFFNDk3QUJCQjJCNjU2NjA0RjAiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo0NTdGNTg3RENEQ0ExMUU0OTdBQkJCMkI2NTY2MDRGMCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo0NTdGNTg3RUNEQ0ExMUU0OTdBQkJCMkI2NTY2MDRGMCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PnMP4b0AAABZSURBVHjaYvj//z8DCAOBKBCzwvjomIkBASyA2JiRkZGVAQtgQuOL4lLMhEUzVsXYFGJVjEshTLEAMQqvA337mpBCkKI7hNyIoQgEWJDY34D4ITZFIAAQYAALGi1udH20PgAAAABJRU5ErkJggg==); }
+			option:expanded > div { foreground-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NTFEN0M2MzZDRENBMTFFNEE2QjFFMjI1NkMxNjdENTAiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NTFEN0M2MzdDRENBMTFFNEE2QjFFMjI1NkMxNjdENTAiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo1MUQ3QzYzNENEQ0ExMUU0QTZCMUUyMjU2QzE2N0Q1MCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo1MUQ3QzYzNUNEQ0ExMUU0QTZCMUUyMjU2QzE2N0Q1MCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PkgPXgYAAABSSURBVHjaYvz//z8DMYCR+gqB2BmIuQioO8EMJEBYFI+i10B8H2w1IyOjCpCjiUPRWaCa33A3YlEMV4ThGSTFKIrAAKQQGUPdy4ouTnTwAAQYAMA0QfDBqcqYAAAAAElFTkSuQmCC); }
+			option:expanded > option { display: block; }
+
+			/*option > text
+			{
+				width: max-intrinsic;
+				outline: solid 1px red;
+			}*/
+		}
+	</style>
+</head>
+
+<body>
+	<select!tree .data-tree />
+</body>
+</html>

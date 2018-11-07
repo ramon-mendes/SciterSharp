@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <authors>$author$</authors>
+    <owners>Ramon F. Mendes</owners>
+    <licenseUrl>http://www.gnu.org/licenses/gpl-3.0.en.html</licenseUrl>
+    <projectUrl>https://github.com/MISoftware/SciterSharp</projectUrl>
+    <iconUrl>http://cdn.misoftware.com.br/PublicImages/sciter-sharp.png</iconUrl>
+    <description>$description$</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright MI Software 2018</copyright>
+    <tags>Sciter HTML C#</tags>
+  </metadata>
+</package>

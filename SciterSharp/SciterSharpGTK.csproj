@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D60ACAE0-C246-4936-B92B-B756841DB545}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SciterSharp</RootNamespace>
+    <AssemblyName>SciterSharpGTK</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;GTKMONO,GTK</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>3</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <DocumentationFile>bin\Debug\SciterSharpGTK.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>3</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <DefineConstants>TRACE;GTKMONO,GTK</DefineConstants>
+    <DocumentationFile>bin\Release\SciterSharpGTK.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Net" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ArchiveResource.cs" />
+    <Compile Include="Interop\SciterXGraphics.cs" />
+    <Compile Include="Interop\SciterXRequest.cs" />
+    <Compile Include="LibVersion.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SciterArchive.cs" />
+    <Compile Include="SciterDebugOutputHandler.cs" />
+    <Compile Include="SciterElement.cs" />
+    <Compile Include="SciterEventHandler.cs" />
+    <Compile Include="SciterGraphics.cs" />
+    <Compile Include="SciterHost.cs" />
+    <Compile Include="SciterRequest.cs" />
+    <Compile Include="SciterValue.cs" />
+    <Compile Include="SciterWindow.cs" />
+    <Compile Include="Interop\PInvokeGTK.cs" />
+    <Compile Include="Interop\PInvokeUtils.cs" />
+    <Compile Include="Interop\SciterX.cs" />
+    <Compile Include="Interop\SciterXBehaviors.cs" />
+    <Compile Include="Interop\SciterXDef.cs" />
+    <Compile Include="Interop\SciterXDom.cs" />
+    <Compile Include="Interop\SciterXValue.cs" />
+    <Compile Include="Interop\SciterXVideoAPI.cs" />
+    <Compile Include="Interop\TIScript.cs" />
+    <Compile Include="MessageBox.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SciterSharpGTK.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

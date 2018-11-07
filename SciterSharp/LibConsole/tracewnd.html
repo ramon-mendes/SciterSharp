@@ -1,0 +1,143 @@
+<!-- OmniView:on -->
+<html window-resizable>
+<head>
+	<title>Trace window</title>
+
+	<script type="text/tiscript">
+		function View_AppendLine(txt)
+		{
+			const MAX_ITEMS = 100;
+			if(self#output.length == MAX_ITEMS)
+				self#output.first.remove();
+			self#output.$append(<li>{txt}</li>);
+			self#output.scrollTo(0, Integer.MAX);
+		}
+
+		self.onKey = function(evt) {
+			if(evt.type == Event.KEY_DOWN && evt.keyCode == Event.VK_ESCAPE)
+				view.close();
+		};
+
+		view.focus = self#prompt.$(widget);
+	</script>
+
+	<script type="text/tiscript">
+		self#console.$(menu).on("click", "li", function(evt) {
+			switch(evt.target.@#cmd)
+			{
+			case "clear":
+				self#output.clear();
+				self#prompt.$(widget).state.focus = true;
+				break;
+			}
+			return true;
+		});
+
+		self#output.on("dblclick", "li", function() {
+			view.clipboard(#put, this.text);
+		});
+
+		self#output.EvalInput = function(input) {
+			var res;
+			try {
+				res = eval(input, view.parent.root.ns);
+			} catch(e) {
+				View_AppendLine(String.$({e}).trim());
+				return;
+			}
+			View_AppendLine(String.$({res}).trim());
+		};
+
+		// PROMPT
+		var last_command;
+
+		self#prompt.$(widget).on("keydown", function(evt) {
+			if(evt.keyCode==Event.VK_RETURN)
+			{
+				if(this.value)
+				{
+					last_command = this.value;
+					self#output.EvalInput(this.value);
+				}
+				this.value = undefined;
+				return true;
+			}
+			else if(evt.keyCode==Event.VK_UP)
+			{
+				if(last_command)
+				{
+					this.value = last_command;
+					this.setSelection(Integer.MAX, Integer.MAX);
+				}
+			}
+		});
+	</script>
+
+	<style>
+		html { size: 700px 500px; }
+		body { margin: 0; overflow: hidden; }
+
+		#console { size: *; }
+		#output { style-set: Output; }
+		@set Output
+		{
+			:root
+			{
+				size: *;
+				overflow-y: auto;
+				context-menu: selector(#console menu);
+			}
+
+			li
+			{
+				margin-left: 4px;
+				padding: 3px 4px; 
+				border-left: solid 5px;
+
+				white-space: prewrap;
+				font-family: Consolas, monospace;
+			}
+
+			li > i { display: block; position: absolute; left: 11px; top: 4px; }
+			li:hover { background: #d4e7f4; }
+			li:current { background: #d4e7f4; color: black; }
+
+			li.info { border-color: #6d54d4; }
+			li.info i { color: #6969ec; }
+			li.warning { border-color: #fb9500; }
+			li.warning i { color: #fb9500; }
+			li.warning > i { font-size: 11px; }
+			li.error { border-color: #808080; }
+			li.error i { color: #aaaaaa; }
+			li.error { background: #fddddd; color: #cb0000; }
+			li.none { border-color: #808080; }
+			li.none i { color: #aaaaaa; }
+		}
+
+		#prompt
+		{
+			flow: horizontal;
+			height: 23px;
+			border-top: solid 1px silver;
+			vertical-align: middle;
+		}
+		#prompt img { width: 9px; fill: #39ace6; margin: * 5px; margin-right: 2px; }
+		#prompt widget { width: *; background: none; font-family: Consolas, monospace; border: none; }
+	</style>
+</head>
+
+<body>
+	<div #console>
+		<div #output />
+
+		<div #prompt>
+			<img src="path:M332 314q0-7-6-13l-260-260q-5-5-12-5t-13 5l-28 28q-6 6-6 13t6 13l219 219-219 220q-6 5-6 12t6 13l28 28q5 6 13 6t12-6l260-260q6-5 6-13z m214 0q0-7-5-13l-260-260q-6-5-13-5t-13 5l-28 28q-5 6-5 13t5 13l219 219-219 220q-5 5-5 12t5 13l28 28q6 6 13 6t13-6l260-260q5-5 5-13z" />
+			<widget !text />
+		</div>
+
+		<menu .context>
+			<li cmd="clear">Clear</li>
+		</menu>
+	</div>
+</body>
+</html>

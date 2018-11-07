@@ -1,0 +1,171 @@
+include "scitersharp:utils.tis";
+
+function MsgBox()
+{
+	view.msgbox(#question, "Do you really want to remove this project?");
+}
+
+namespace console
+{
+	function log(params..)
+	{
+		stdout.println(params.join(" "));
+	}
+	function plog(params..)
+	{
+		self.post(::log.apply(undefined, params));
+	}
+
+	function trace(params..)
+	{
+		var tracewnd = View.tracewnd;
+		if(!tracewnd || tracewnd.windowState != View.WINDOW_SHOWN)
+		{
+			tracewnd = view.window({
+				type: View.TOOL_WINDOW,
+				url: "scitersharp:tracewnd.html",
+				alignment: 5,
+				screen: view.screen
+			});
+			ns_arr_popups.push(tracewnd);
+		}
+		tracewnd.root.ns.View_AppendLine(params.join(" "));
+		View.tracewnd = tracewnd;
+
+		return tracewnd;
+	}
+	function ptrace(params..)
+	{
+		self.post(::trace.apply(undefined, params));
+	}
+	
+	function count()
+	{
+		var caller = __TRACE__[1];
+		var id = caller[1] + " line " + caller[0];
+		if(ns_count_funcs.exists(id))
+			ns_count_funcs[id]++;
+		else
+			ns_count_funcs[id] = 1;
+		log(id + ": " + ns_count_funcs[id]);
+	}
+	function tcount()
+	{
+		var caller = __TRACE__[1];
+		var id = caller.toString();
+		if(ns_tcount_funcs.exists(id))
+			ns_tcount_funcs[id]++;
+		else
+			ns_tcount_funcs[id] = 1;
+		trace(caller[1] + ": " + ns_tcount_funcs[id]);
+	}
+
+	function show(data)
+	{
+		var url = "scitersharp:show_data.html";
+		if(typeof data==#Image)
+			url = "scitersharp:show_img.html";
+		
+		var popup = view.window{
+			type: View.TOOL_WINDOW,
+			url: url,
+			alignment: 5,
+			parameters: { abc: 123 },
+			screen: view.screen
+		};
+		ns_arr_popups.push(popup);
+		self.post(::popup.root.state.focus = true);
+		return popup;
+	}
+
+	function foreach(param)
+	{
+		for(var (k,v) in param)
+			log(k + ":", v);
+		otherwise
+			stderr.println("console.foreach() found nothing");
+	}
+
+	function time(name=undefined)
+	{
+		if(name!=undefined && typeof name != #string)
+			throw "Not a String (" + name +")";
+
+		ns_bench_timers[name ? name : #last_timer] = System.ticks;
+	}
+
+	function timeEnd(name=undefined)
+	{
+		if(name!=undefined && typeof name != #string)
+			throw "Not a String (" + name +")";
+
+		name = name ? name : #last_timer;
+		var before = ns_bench_timers[name];
+		if(before==undefined)
+			throw "Timer named '" + name + "' was not started with console.time()";
+		delete ns_bench_timers[name];
+
+		var total = System.ticks - before;
+		if(typeof name == #symbol)
+			log("timeEnd: " + total + "ms");
+		else
+			log("timeEnd (" + name + "): " + total + "ms");
+	}
+
+	function showMemStats(msg="")
+	{
+		var (total,free, used) = gc();
+		log("heap %s total=%d free=%d used=%d bytes\n", msg, total, free, used);
+	}
+
+	function stackTrace()
+	{
+		var arr_trace = __TRACE__;
+		arr_trace.shift();
+
+		log("Stack trace:");
+		for(var frame in arr_trace)
+			log("\t" + frame[1] + ", " + frame[2] + ", line " + frame[0]);
+	}
+
+
+	function reset()
+	{
+		for(var item in ns_arr_popups)
+			item.close();
+		ns_arr_popups = [];
+		ns_count_funcs = {};
+		ns_tcount_funcs = {};
+		ns_bench_timers = {};
+	}
+
+	// Omni ONLY
+	function dom(el) {}
+	function colorpick(el, css_prop) {}
+	function colortouch(el, what=#bg, mode=#hue-saturation) {}
+	function texturepick(el, what=#bg) {}
+	function fontpick(el) {}
+	function mypick(el)
+	{
+
+	}
+
+
+	// ------------------------------------------------------
+	var ns_arr_popups = [];
+	var ns_count_funcs = {};
+	var ns_tcount_funcs = {};
+	var ns_bench_timers = {};
+}
+
+function DummyAspect()
+{
+}
+
+
+// aliases
+const log = console.log;
+const plog = console.plog;
+const trace = console.trace;
+const ptrace = console.ptrace;
+const count = console.count;

@@ -1,0 +1,15 @@
+NugetKeys.cs
+*.nupkg
+OLD.git
+
+#IDE Garbage
+Debug/
+Release/
+packages/
+bin/
+obj/
+.vs
+*.sdf
+.DS_Store
+*.db
+*.userprefs

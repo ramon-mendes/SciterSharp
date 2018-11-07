@@ -1,0 +1,31 @@
+<html>
+<head>
+	<style>
+		h1 { color: blue; font-size: 30px; }
+	</style>
+
+	<script type="text/tiscript">
+		$(h1).text = view.Host_HelloWorld();
+
+		var version_major = Sciter.VERSION >> 16;
+		var version_minor = Sciter.VERSION & 0xFFFF;
+		var revision_major = Sciter.REVISION >> 16;
+		var revision_minor = Sciter.REVISION & 0xFFFF;
+		$(h2).text = "Sciter version: " + String.printf("%d.%d.%d.%d", version_major, version_minor, revision_major, revision_minor);
+
+		$(a).on("click", function(evt) {
+			Sciter.launch(this.@#href);
+            return true;
+		});
+	</script>
+</head>
+
+<body>
+    <img src="http://misoftware.rs/Content/img/logo_mi.png" />
+	<h1 />
+	<h2 />
+
+	If you are new to C# Sciter, read our introductory article:
+	<a href="http://www.codeproject.com/Articles/1057199/Sciter-HTML-Csharp-based-desktop-apps-walkthrough">Walk-through for writing apps with SciterSharp</a>
+</body>
+</html>

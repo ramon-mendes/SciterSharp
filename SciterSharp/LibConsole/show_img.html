@@ -1,0 +1,68 @@
+﻿<!-- OmniView:on -->
+<html window-resizable>
+<head>
+	<title>console.show() inspector</title>
+
+	<script type="text/tiscript">
+		self.onKey = function(evt) {
+			if(evt.type == Event.KEY_DOWN && evt.keyCode == Event.VK_ESCAPE)
+				view.close();
+		};
+
+		//view.parameters = self.loadImage("file://D:/Dropbox/Untitled.png");
+
+		var fit = false;
+
+		$(b).text = view.parameters.url;
+		$(span).text = String.printf("(%dpx, %dpx)", view.parameters.width, view.parameters.height);
+
+		$(button).onValueChanged = function() {
+			fit = this.state.checked;
+			self#img.refresh();
+		};
+
+		self#img.onClick = function() {
+			fit = $(button).value = !fit;
+			self#img.refresh();
+		};
+
+		self#img.paintContent = function(gfx) {
+			var (w,h) = this.box(#dimension);
+			if(fit)
+				gfx.drawImage(view.parameters, 0, 0, w, h);
+			else
+				gfx.blendImage(view.parameters, 0, 0, 0, 0, w, h);
+			return true;
+		};
+
+		view.focus = self;
+	</script>
+
+	<style>
+		@import url(popup.css);
+
+		#main { size: *; margin: 5px 5px; }
+		#top { flow: horizontal; border-spacing: 5px; vertical-align: middle; white-space: nowrap; }
+		#top button { margin-left: *; behavior: check; }
+		#top button:checked { background-image: url(theme:toolbar-button-pressed); }
+		#img
+		{
+			size: *;
+			margin-top: 4px;
+			outline: solid 1px silver;
+			cursor: pointer;
+			background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoAQMAAAC2MCouAAAABlBMVEXKysz///+KlAPLAAAAGUlEQVR42mNgYOD//5+B/uT//x8YGOhPAgCV1mOdRMvqVwAAAABJRU5ErkJggg==);
+		}
+	</style>
+</head>
+
+<body>
+	<div #main>
+		<div #top>
+			<b /><span />
+			<button .light>Fit</button>
+		</div>
+		<div #img />
+	</div>
+</body>
+</html>
