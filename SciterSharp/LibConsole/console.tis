@@ -70,7 +70,7 @@ namespace console
 			type: View.TOOL_WINDOW,
 			url: url,
 			alignment: 5,
-			parameters: { abc: 123 },
+			parameters: data,
 			screen: view.screen
 		};
 		ns_arr_popups.push(popup);
