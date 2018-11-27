@@ -32,7 +32,7 @@ namespace PublishNuget
 			{
 				var path = Environment.GetEnvironmentVariable("PATH");
 				Environment.SetEnvironmentVariable("PATH", path + @";C:\Windows\Microsoft.NET\Framework64\v4.0.30319\");
-				Environment.CurrentDirectory = @"D:\ProjetosSciter\SciterSharp\SciterSharp";
+				Environment.CurrentDirectory += "/../../../SciterSharp";
 
 				SpawnProcess("msbuild", "SciterSharpWindows.csproj /t:Clean,Build /p:Configuration=Release");
 				SpawnProcess("nuget", "pack SciterSharpWindows.csproj -Prop Configuration=Release");
