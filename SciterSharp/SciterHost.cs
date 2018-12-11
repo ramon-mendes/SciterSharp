@@ -78,21 +78,12 @@ namespace SciterSharp
 			SetupWindow(wnd._hwnd);
 		}
 
-		public void SetupWindow(IntPtr hwnd, bool enable_script_runtime_features = true)
+		public void SetupWindow(IntPtr hwnd)
 		{
 			Debug.Assert(hwnd != IntPtr.Zero);
 			Debug.Assert(_hwnd == IntPtr.Zero, "You already called SetupWindow()");
 
 			_hwnd = hwnd;
-
-			if(enable_script_runtime_features)
-			{
-				var allow = SciterXDef.SCRIPT_RUNTIME_FEATURES.ALLOW_EVAL |
-							SciterXDef.SCRIPT_RUNTIME_FEATURES.ALLOW_FILE_IO |
-							SciterXDef.SCRIPT_RUNTIME_FEATURES.ALLOW_SOCKET_IO |
-							SciterXDef.SCRIPT_RUNTIME_FEATURES.ALLOW_SYSINFO;
-				_api.SciterSetOption(hwnd, SciterXDef.SCITER_RT_OPTIONS.SCITER_SET_SCRIPT_RUNTIME_FEATURES, new IntPtr((int) allow));
-			}
 
 			// Register a global event handler for this Sciter window
 			_cbk = HandleNotification;

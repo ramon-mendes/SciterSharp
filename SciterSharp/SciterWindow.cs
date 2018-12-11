@@ -64,6 +64,12 @@ namespace SciterSharp
 
 		public SciterWindow()
 		{
+			var allow = SciterXDef.SCRIPT_RUNTIME_FEATURES.ALLOW_EVAL |
+								SciterXDef.SCRIPT_RUNTIME_FEATURES.ALLOW_FILE_IO |
+								SciterXDef.SCRIPT_RUNTIME_FEATURES.ALLOW_SOCKET_IO |
+								SciterXDef.SCRIPT_RUNTIME_FEATURES.ALLOW_SYSINFO;
+			_api.SciterSetOption(IntPtr.Zero, SciterXDef.SCITER_RT_OPTIONS.SCITER_SET_SCRIPT_RUNTIME_FEATURES, new IntPtr((int)allow));
+
 #if WINDOWS
 			_proc = InternalProcessSciterWindowMessage;
 #else
