@@ -43,7 +43,6 @@ namespace SciterSharp
 		public static bool InjectLibConsole = true;
 		private static List<IntPtr> _lib_console_vms = new List<IntPtr>();
 		private static SciterArchive _arch;
-		private static DefaultEVH _defevh = new DefaultEVH();
 
 		private class DefaultEVH : SciterEventHandler { }
 
@@ -88,8 +87,6 @@ namespace SciterSharp
 			// Register a global event handler for this Sciter window
 			_cbk = HandleNotification;
 			_api.SciterSetCallback(hwnd, Marshal.GetFunctionPointerForDelegate(_cbk), IntPtr.Zero);
-
-			_api.SciterWindowAttachEventHandler(_hwnd, _defevh._proc, IntPtr.Zero, (uint)SciterXBehaviors.EVENT_GROUPS.HANDLE_ALL);
 		}
 
 		public void InjectGlobalTISript(string script)
