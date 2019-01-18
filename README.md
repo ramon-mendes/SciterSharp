@@ -20,9 +20,9 @@ Comercial License: **for inquiries, [contact me](mailto:ramon@misoftware.com.br)
 
 [Introductory walk-through for writing apps with SciterSharp](http://www.codeproject.com/Articles/1057199/Sciter-HTML-Csharp-based-desktop-apps-walkthrough)
 
-[Monday NATIVE]()
+[Wednesday CODE](http://misoftware.com.br/Home/Tag/Wednesday%20CODE)
 
-[Desktop cross-platform demo app + source-code](https://github.com/midiway/OctoDeskdex)
+[Desktop cross-platform demo app + source-code](https://github.com/ramon-mendes/OctoDeskdexDesktop)
 
 ## Get help
 
