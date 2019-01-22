@@ -5,7 +5,7 @@
     <version>$version$</version>
     <authors>$author$</authors>
     <owners>Ramon F. Mendes</owners>
-    <licenseUrl>http://www.gnu.org/licenses/gpl-3.0.en.html</licenseUrl>
+    <license type="expression">GPL-3.0-only</license>
     <projectUrl>http://misoftware.com.br/</projectUrl>
     <iconUrl>http://cdn.misoftware.com.br/PublicImages/sciter-sharp.png</iconUrl>
     <description>$description$</description>
