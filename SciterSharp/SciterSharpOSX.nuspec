@@ -2,10 +2,10 @@
 <package >
   <metadata>
     <id>SciterSharpOSX</id>
-    <version>2.0.67</version>
+    <version>2.0.74</version>
     <authors>MI Software</authors>
     <owners>Ramon F. Mendes</owners>
-    <licenseUrl>http://www.gnu.org/licenses/gpl-3.0.en.html</licenseUrl>
+    <license type="expression">GPL-3.0-only</license>
     <projectUrl>https://github.com/MISoftware/SciterSharp</projectUrl>
     <iconUrl>http://cdn.misoftware.com.br/PublicImages/sciter-sharp.png</iconUrl>
     <description>C# bindings for the Sciter engine</description>
