@@ -56,6 +56,11 @@ namespace SciterSharp
 		public NSView _nsview { get; private set; }
 #endif
 
+		public static implicit operator IntPtr(SciterWindow wnd)
+		{
+			return wnd._hwnd;
+		}
+
 		public bool SetSciterOption(SciterXDef.SCITER_RT_OPTIONS option, IntPtr value)
 		{
 			Debug.Assert(_hwnd != IntPtr.Zero);
