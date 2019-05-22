@@ -61,7 +61,7 @@ namespace TestGraphics
 			Debug.Assert(File.Exists(path));
             path = path.Replace('\\', '/');
 
-			string url = "file:///" + path;
+			string url = "file://" + path;
 		#else
 			string url = "archive://app/" + page_from_res_folder;
 		#endif

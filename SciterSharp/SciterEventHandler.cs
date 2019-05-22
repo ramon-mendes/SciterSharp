@@ -124,6 +124,7 @@ namespace SciterSharp
 
 		protected virtual bool OnScroll(SciterElement se, SciterXBehaviors.SCROLL_PARAMS prms) { return false; }
 		protected virtual bool OnGesture(SciterElement se, SciterXBehaviors.GESTURE_PARAMS prms) { return false; }
+		protected virtual bool OnExchange(SciterElement se, SciterXBehaviors.EXCHANGE_PARAMS prms) { return false; }
 
 		// EventProc
 		private bool EventProc(IntPtr tag, IntPtr he, uint evtg, IntPtr prms)
@@ -264,6 +265,12 @@ namespace SciterSharp
 						}
 					*/
 					return false;
+
+				case SciterXBehaviors.EVENT_GROUPS.HANDLE_EXCHANGE:
+					{
+						SciterXBehaviors.EXCHANGE_PARAMS p = (SciterXBehaviors.EXCHANGE_PARAMS)Marshal.PtrToStructure(prms, typeof(SciterXBehaviors.EXCHANGE_PARAMS));
+						return OnExchange(se, p);
+					}
 
 				case SciterXBehaviors.EVENT_GROUPS.HANDLE_GESTURE:
 					{

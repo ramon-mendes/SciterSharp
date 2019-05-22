@@ -281,6 +281,39 @@ namespace SciterSharp.Interop
 			public double				delta_v;
 		}
 
+		public enum EXCHANGE_CMD
+		{
+			X_DRAG_ENTER = 0,       // drag enters the element
+			X_DRAG_LEAVE = 1,       // drag leaves the element  
+			X_DRAG = 2,             // drag over the element
+			X_DROP = 3,             // data dropped on the element  
+			X_PASTE = 4,            // N/A
+			X_DRAG_REQUEST = 5,     // N/A
+			X_DRAG_CANCEL = 6,      // drag cancelled (e.g. by pressing VK_ESCAPE)
+			X_WILL_ACCEPT_DROP = 7, // drop target element shall consume this event in order to receive X_DROP 
+		}
+
+		public enum DD_MODES
+		{
+			DD_MODE_NONE = 0, // DROPEFFECT_NONE	( 0 )
+			DD_MODE_COPY = 1, // DROPEFFECT_COPY	( 1 )
+			DD_MODE_MOVE = 2, // DROPEFFECT_MOVE	( 2 )
+			DD_MODE_COPY_OR_MOVE = 3, // DROPEFFECT_COPY	( 1 ) | DROPEFFECT_MOVE	( 2 )
+			DD_MODE_LINK = 4, // DROPEFFECT_LINK	( 4 )
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct EXCHANGE_PARAMS
+		{
+			public uint cmd;						// EXCHANGE_EVENTS
+			public int target;						// target element
+			public int source;						// source element (can be null if D&D from external window)
+			public PInvokeUtils.POINT pos;          // position of cursor, element relative
+			public PInvokeUtils.POINT pos_view;     // position of cursor, view relative
+			public uint mode;						// DD_MODE 
+			public SciterXValue.VALUE data;         // packaged drag data
+		}
+
 		public enum DRAW_EVENTS : uint
 		{
 			DRAW_BACKGROUND = 0,
