@@ -3,11 +3,12 @@
 	<metadata>
 		<id>$id$</id>
 		<version>$version$</version>
-		<authors>$author$</authors>
-		<owners>Ramon F. Mendes</owners>
+		<authors>Ramon</authors>
+		<owners>Ramon</owners>
 		<license type="expression">GPL-3.0-only</license>
 		<projectUrl>https://github.com/MISoftware/SciterSharp</projectUrl>
-		<iconUrl>http://cdn.misoftware.com.br/PublicImages/sciter-sharp.png</iconUrl>
+		<iconUrl>http://misoftware.com.br/cdn/PublicImages/sciter-sharp.png</iconUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>$description$</description>
 		<releaseNotes></releaseNotes>
 		<copyright>Copyright MI Software 2018</copyright>

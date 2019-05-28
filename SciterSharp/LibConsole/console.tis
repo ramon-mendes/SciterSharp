@@ -139,17 +139,13 @@ namespace console
 		ns_bench_timers = {};
 	}
 
-	// Omni ONLY
-	function dom(el) {}
+	// Omni ONLY, not implemented
+	/*function dom(el) {}
 	function colorpick(el, css_prop) {}
 	function colortouch(el, what=#bg, mode=#hue-saturation) {}
 	function texturepick(el, what=#bg) {}
 	function fontpick(el) {}
-	function mypick(el)
-	{
-
-	}
-
+	function mypick(el) {}*/
 
 	// ------------------------------------------------------
 	var ns_arr_popups = [];
