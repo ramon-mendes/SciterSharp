@@ -94,6 +94,23 @@ namespace console
 		ns_bench_timers[name ? name : #last_timer] = System.ticks;
 	}
 
+	function timeLog(name=undefined)
+	{
+		if(name!=undefined && typeof name != #string)
+			throw "Not a String (" + name +")";
+
+		name = name ? name : #last_timer;
+		var before = ns_bench_timers[name];
+		if(before==undefined)
+			throw "Timer named '" + name + "' was not started with console.time()";
+
+		var total = System.ticks - before;
+		if(typeof name == #symbol)
+			log("timeLog: " + total + "ms");
+		else
+			log("timeLog (" + name + "): " + total + "ms");
+	}
+
 	function timeEnd(name=undefined)
 	{
 		if(name!=undefined && typeof name != #string)

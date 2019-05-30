@@ -8,7 +8,7 @@
 			if(evt.type == Event.KEY_DOWN && evt.keyCode == Event.VK_ESCAPE)
 				view.close();
 		};
-		//view.parameters = view.mediaVars();
+		view.parameters = self[0];
 
 		class DataTree : Behavior
 		{
@@ -18,8 +18,11 @@
 					this.expandOptionData(this, 0, view.parameters);
 			}
 			
+			var cnt = 0;
 			function expandOptionData(el_parent, ideep, data)
 			{
+				cnt++;
+
 				function appendOption(el_parent, vdisplay)
 				{
 					var el_opt = el_parent.$append(<option/>);
@@ -122,6 +125,7 @@
 					break;
 
 				case #Element:
+					console.time();
 					if(data.length)
 					{
 						var arr = [];
@@ -130,7 +134,8 @@
 
 						appendCompositeOption(el_parent, "<span.pseudo>DOM childs[" + data.length + "]</span>", arr);
 					}
-
+					console.timeEnd();
+					
 					// membersOf
 					appendCompositeOption(el_parent, "<span.pseudo>membersOf</span>", membersOf(data));
 
@@ -199,7 +204,7 @@
 
 						(vcomposite, vdisplay) = getValueDisplay(data.value);
 						appendOption(el_parent, "<span.field>value:</span> " + vdisplay);
-
+						
 						(vcomposite, vdisplay) = getValueDisplay(data.prototype);
 						appendOption(el_parent, "<span.field>prototype:</span> " + vdisplay);
 
@@ -269,6 +274,7 @@
 						(vcomposite, vdisplay) = getValueDisplay(data.isComment);
 						appendOption(el_parent, "<span.field>isComment:</span> " + vdisplay);
 					}
+					console.timeEnd();
 					break;
 
 				case #function:
