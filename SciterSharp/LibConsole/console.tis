@@ -43,7 +43,7 @@ namespace console
 	{
 		var caller = __TRACE__[1];
 		var id = caller[1] + " line " + caller[0];
-		if(ns_count_funcs.exists(id))
+		if(typeof(ns_count_funcs[id]) == #integer)
 			ns_count_funcs[id]++;
 		else
 			ns_count_funcs[id] = 1;
