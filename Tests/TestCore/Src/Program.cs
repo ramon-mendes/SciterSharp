@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Reflection;
 
 namespace TestCore
 {
@@ -29,6 +30,10 @@ namespace TestCore
 		[STAThread]
 		static void Main(string[] args)
 		{
+			var list = new List<int> { 123 };
+
+			var ss = SciterValue.FromObject(new { aa = list });
+
 			Console.WriteLine("Sciter: " + SciterX.Version);
 			Console.WriteLine("Bitness: " + IntPtr.Size);
 

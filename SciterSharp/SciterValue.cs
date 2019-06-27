@@ -134,14 +134,20 @@ namespace SciterSharp
 
 			if(ic is bool)
 				_api.ValueIntDataSet(ref _data, (bool) ic==true ? 1 : 0, (uint) SciterXValue.VALUE_TYPE.T_BOOL, 0);
+			else if(ic is byte)
+				_api.ValueIntDataSet(ref _data, (int)ic, (uint)SciterXValue.VALUE_TYPE.T_INT, 0);
 			else if(ic is int)
 				_api.ValueIntDataSet(ref _data, (int) ic, (uint) SciterXValue.VALUE_TYPE.T_INT, 0);
 			else if(ic is uint)
 				_api.ValueIntDataSet(ref _data, (int)(uint) ic, (uint)SciterXValue.VALUE_TYPE.T_INT, 0);
 			else if(ic is double)
 				_api.ValueFloatDataSet(ref _data, (double) ic, (uint) SciterXValue.VALUE_TYPE.T_FLOAT, 0);
+			else if(ic is decimal)
+				_api.ValueFloatDataSet(ref _data, (double)ic, (uint)SciterXValue.VALUE_TYPE.T_FLOAT, 0);
 			else if(ic is string)
 				_api.ValueStringDataSet(ref _data, (string) ic, (uint) ((string) ic).Length, (uint) SciterXValue.VALUE_UNIT_TYPE_STRING.UT_STRING_STRING);
+			else if(ic is DateTime)
+				_api.ValueInt64DataSet(ref _data, ((DateTime)ic).ToFileTime(), (uint)SciterXValue.VALUE_TYPE.T_DATE, 0);
 			else
 				throw new Exception("Can not create a SciterValue from type '" + ic.GetType() + "'");
 		}
@@ -232,23 +238,73 @@ namespace SciterSharp
 			return sv;
 		}
 
+		/// <summary>
+		/// Create from an arbitrary object, looping recursively through its public properties
+		/// </summary>
+		public static SciterValue FromObject(object obj)
+		{
+			List<object> anti_recurse = new List<object>();
+			return FromObjectRecurse(obj, anti_recurse, 0);
+		}
+
+		private static SciterValue FromObjectRecurse(object obj, List<object> anti_recurse, int deep)
+		{
+			if(deep++ == 10)
+				throw new Exception("Recursion too deep");
+
+			if(obj is IConvertible)
+				return new SciterValue(obj as IConvertible);
+
+			if(anti_recurse.Contains(obj))
+				throw new Exception("Found recursive property");
+			anti_recurse.Add(anti_recurse);
+
+			var t = obj.GetType();
+			if(t.GetInterface("IEnumerable") != null)
+			{
+				SciterValue sv_arr = new SciterValue();
+				MethodInfo castMethod = typeof(Enumerable).GetMethod("Cast")
+					.MakeGenericMethod(new Type[] { typeof(object) });
+				var castedObject = (IEnumerable<object>) castMethod.Invoke(null, new object[] { obj });
+
+				foreach(var item in castedObject)
+				{
+					sv_arr.Append(FromObjectRecurse(item, anti_recurse, deep));
+				}
+				return sv_arr;
+			}
+
+			var sv = new SciterValue();
+			foreach(var prop in t.GetProperties())
+			{
+				if(prop.CanRead)
+				{
+					var val = prop.GetValue(obj);
+					sv[prop.Name] = FromObjectRecurse(val, anti_recurse, deep);
+				}
+			}
+			return sv;
+		}
 
 		/// <summary>
 		/// Constructs a TIScript array T[] where T is a basic type like int or string
 		/// </summary>
-		public static SciterValue FromList<T>(IList<T> list) where T : /*struct,*/ IConvertible
+		public static SciterValue FromList<T>(IEnumerable<T> list) where T : /*struct,*/ IConvertible
 		{
 			Debug.Assert(list != null);
 
 			SciterValue sv = new SciterValue();
-			if(list.Count==0)
+			if(list.Count()==0)
 			{
 				_api.ValueIntDataSet(ref sv._data, 0, (uint) SciterXValue.VALUE_TYPE.T_ARRAY, 0);
 				return sv;
 			}
 
-			for(int i = 0; i < list.Count; i++)
-				sv.SetItem(i, new SciterValue(list[i]));
+			int i = 0;
+			foreach(var item in list)
+			{
+				sv.SetItem(i++, new SciterValue(item));
+			}
 			return sv;
 		}
 
