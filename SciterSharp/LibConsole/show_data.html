@@ -125,7 +125,6 @@
 					break;
 
 				case #Element:
-					console.time();
 					if(data.length)
 					{
 						var arr = [];
@@ -134,7 +133,6 @@
 
 						appendCompositeOption(el_parent, "<span.pseudo>DOM childs[" + data.length + "]</span>", arr);
 					}
-					console.timeEnd();
 					
 					// membersOf
 					appendCompositeOption(el_parent, "<span.pseudo>membersOf</span>", membersOf(data));
@@ -274,7 +272,6 @@
 						(vcomposite, vdisplay) = getValueDisplay(data.isComment);
 						appendOption(el_parent, "<span.field>isComment:</span> " + vdisplay);
 					}
-					console.timeEnd();
 					break;
 
 				case #function:

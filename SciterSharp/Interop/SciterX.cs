@@ -550,8 +550,8 @@ namespace SciterSharp.Interop
 			public delegate SciterXDom.SCDOM_RESULT FPTR_SciterGetElementByUID(IntPtr hwnd, uint uid, out IntPtr phe);
 			//SCDOM_RESULT function(HELEMENT hePopup, HELEMENT heAnchor, UINT placement) SciterShowPopup;
 			public delegate SciterXDom.SCDOM_RESULT FPTR_SciterShowPopup(IntPtr he, IntPtr heAnchor, uint placement);
-			//SCDOM_RESULT function(HELEMENT hePopup, POINT pos, BOOL animate) SciterShowPopupAt;
-			public delegate SciterXDom.SCDOM_RESULT FPTR_SciterShowPopupAt(IntPtr he, PInvokeUtils.POINT pos, bool animate);
+			//SCDOM_RESULT function(HELEMENT hePopup, POINT pos, UINT placement) SciterShowPopupAt;
+			public delegate SciterXDom.SCDOM_RESULT FPTR_SciterShowPopupAt(IntPtr he, PInvokeUtils.POINT pos, uint placement);
 			//SCDOM_RESULT function(HELEMENT he) SciterHidePopup;
 			public delegate SciterXDom.SCDOM_RESULT FPTR_SciterHidePopup(IntPtr he);
 			//SCDOM_RESULT function( HELEMENT he, UINT* pstateBits) SciterGetElementState;

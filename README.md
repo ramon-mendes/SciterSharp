@@ -24,6 +24,8 @@ Comercial License: **for inquiries, [contact me](mailto:ramon@misoftware.com.br)
 
 [Desktop cross-platform demo app + source-code](https://github.com/ramon-mendes/OctoDeskdexDesktop)
 
+[Native C# API with SciterEventHandler and reflection](https://sciter.com/native-c-api-with-scitereventhandler-and-reflection/)
+
 ## Get help
 
 [SciterSharp C# Forum](http://sciter.com/forums/forum/scitersharp-c/)
