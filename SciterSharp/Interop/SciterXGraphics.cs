@@ -64,7 +64,7 @@ namespace SciterSharp.Interop
 			SCITER_LINE_CAP_ROUND = 2,
 		}
 
-		public enum SCITER_TEXT_ALIGNMENT
+		/*public enum SCITER_TEXT_ALIGNMENT
 		{
 			TEXT_ALIGN_DEFAULT,
 			TEXT_ALIGN_START,
@@ -78,7 +78,7 @@ namespace SciterSharp.Interop
 			TEXT_DIRECTION_LTR,
 			TEXT_DIRECTION_RTL,
 			TEXT_DIRECTION_TTB,
-		}
+		}*/
 
 		public enum SCITER_IMAGE_ENCODING
 		{
@@ -88,7 +88,7 @@ namespace SciterSharp.Interop
 			SCITER_IMAGE_ENCODING_WEBP,
 		}
 
-		[StructLayout(LayoutKind.Sequential)]
+		/*[StructLayout(LayoutKind.Sequential)]
 		public struct SCITER_TEXT_FORMAT
 		{
 			[MarshalAs(UnmanagedType.LPWStr)]
@@ -102,7 +102,7 @@ namespace SciterSharp.Interop
 			public SCITER_TEXT_ALIGNMENT lineAlignment; // a.k.a. vertical alignment for roman writing systems
 			[MarshalAs(UnmanagedType.LPWStr)]
 			public string localeName;
-		}
+		}*/
 
 		[StructLayout(LayoutKind.Sequential)]
 		public struct ISciterGraphicsAPI
@@ -393,11 +393,11 @@ namespace SciterSharp.Interop
 
 			// create text layout using element's styles
 			// GRAPHIN_RESULT SCFN(textCreateForElement)(HTEXT* ptext, LPCWSTR text, UINT textLength, HELEMENT he );
-			public delegate GRAPHIN_RESULT FPTR_textCreateForElement(out IntPtr ptext, [MarshalAs(UnmanagedType.LPWStr)]string text, uint textLength, IntPtr he);
+			public delegate GRAPHIN_RESULT FPTR_textCreateForElement(out IntPtr ptext, [MarshalAs(UnmanagedType.LPWStr)]string text, uint textLength, IntPtr he, [MarshalAs(UnmanagedType.LPWStr)]string classNameOrNull);
 
 			// create text layout using explicit format declaration
-			// GRAPHIN_RESULT SCFN(textCreate)(HTEXT* ptext, LPCWSTR text, UINT textLength, const SCITER_TEXT_FORMAT* format );
-			public delegate GRAPHIN_RESULT FPTR_textCreate(out IntPtr htext, [MarshalAs(UnmanagedType.LPWStr)]string text, uint textLength, ref SCITER_TEXT_FORMAT format);
+			// GRAPHIN_RESULT SCFN(textCreateForElementAndStyle)(HTEXT* ptext, LPCWSTR text, UINT textLength, HELEMENT he, LPCWSTR style, UINT styleLength); 
+			public delegate GRAPHIN_RESULT FPTR_textCreateForElementAndStyle(out IntPtr ptext, [MarshalAs(UnmanagedType.LPWStr)]string text, uint textLength, IntPtr he, [MarshalAs(UnmanagedType.LPWStr)]string style, uint styleLength);
 
 			public delegate GRAPHIN_RESULT FPTR_textAddRef(IntPtr htext);
 			public delegate GRAPHIN_RESULT FPTR_textRelease(IntPtr htext);

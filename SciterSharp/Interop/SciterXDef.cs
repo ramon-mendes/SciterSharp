@@ -213,6 +213,16 @@ namespace SciterSharp.Interop
 			/// The engine copies this string inside the call.
 			/// </summary>
 			SCITER_SET_INIT_SCRIPT = 13,
+
+			/// <summary>
+			/// hWnd, value - TRUE/FALSE - window is main, will destroy all other dependent windows on close
+			/// </summary>
+			SCITER_SET_MAIN_WINDOW = 14,
+
+			/// <summary>
+			/// hWnd - N/A , value - max request length in megabytes (1024*1024 bytes)
+			/// </summary>
+			SCITER_SET_MAX_HTTP_DATA_LENGTH = 15,
 		}
 
 #if WINDOWS
