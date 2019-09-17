@@ -163,7 +163,7 @@ namespace SciterSharp.Interop
 			public FPTR_gFillMode				gFillMode;
 
 			public FPTR_textCreateForElement	textCreateForElement;
-			public FPTR_textCreate				textCreate;
+			public FPTR_textCreateForElementAndStyle textCreateForElementAndStyle;
 			public FPTR_textAddRef				textAddRef;
 			public FPTR_textRelease				textRelease;
 			public FPTR_textGetMetrics			textGetMetrics;

@@ -587,10 +587,10 @@ namespace SciterSharp
 
 		private SciterText() { }// non-user usable
 
-		public static SciterText Create(string text, SciterXGraphics.SCITER_TEXT_FORMAT format)
+		public static SciterText Create(string text, IntPtr he, string className = null)
 		{
 			IntPtr htext;
-			var r = _gapi.textCreate(out htext, text, (uint) text.Length, ref format);
+			var r = _gapi.textCreateForElement(out htext, text, (uint) text.Length, he, className);
 			Debug.Assert(r == SciterXGraphics.GRAPHIN_RESULT.GRAPHIN_OK);
 			Debug.Assert(htext != IntPtr.Zero);
 
@@ -598,6 +598,20 @@ namespace SciterSharp
 			st._htext = htext;
 			return st;
 		}
+
+
+		public static SciterText CreateWithStyle(string text, IntPtr he, string style)
+		{
+			IntPtr htext;
+			var r = _gapi.textCreateForElementAndStyle(out htext, text, (uint)text.Length, he, style, (uint) style.Length);
+			Debug.Assert(r == SciterXGraphics.GRAPHIN_RESULT.GRAPHIN_OK);
+			Debug.Assert(htext != IntPtr.Zero);
+
+			SciterText st = new SciterText();
+			st._htext = htext;
+			return st;
+		}
+
 
 		public static SciterText FromSV(SciterValue sv)
 		{
@@ -618,18 +632,6 @@ namespace SciterSharp
 			var r = _gapi.vWrapText(_htext, out v);
 			Debug.Assert(r == SciterXGraphics.GRAPHIN_RESULT.GRAPHIN_OK);
 			return new SciterValue(v);
-		}
-
-		public static SciterText CreateForElement(string text, SciterElement element)
-		{
-			IntPtr htext;
-			var r = _gapi.textCreateForElement(out htext, text, (uint)text.Length, element._he);
-			Debug.Assert(r == SciterXGraphics.GRAPHIN_RESULT.GRAPHIN_OK);
-			Debug.Assert(htext != IntPtr.Zero);
-
-			SciterText st = new SciterText();
-			st._htext = htext;
-			return st;
 		}
 
 		public class TextMetrics
