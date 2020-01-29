@@ -599,7 +599,13 @@ namespace SciterSharp
 			return st;
 		}
 
-
+		/// <summary>
+		/// create text layout using explicit style declaration
+		/// </summary>
+		/// <param name="text"></param>
+		/// <param name="he"></param>
+		/// <param name="style"></param>
+		/// <returns></returns>
 		public static SciterText CreateWithStyle(string text, IntPtr he, string style)
 		{
 			IntPtr htext;

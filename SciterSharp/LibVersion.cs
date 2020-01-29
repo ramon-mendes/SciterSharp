@@ -8,6 +8,6 @@ namespace SciterSharp
 {
 	public static class LibVersion
 	{
-		public const string AssemblyVersion = "2.0.84";
+		public const string AssemblyVersion = "2.0.89";
 	}
 }

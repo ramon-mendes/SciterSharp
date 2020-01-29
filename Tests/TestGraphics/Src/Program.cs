@@ -43,6 +43,9 @@ namespace TestGraphics
 			// Show window and Run message loop
 			wnd.Show();
 			PInvokeUtils.RunMsgLoop();
+
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
 		}
 	}
 }

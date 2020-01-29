@@ -15,13 +15,7 @@ namespace TestGraphics
 		{
 			if(prms.cmd == SciterXBehaviors.DRAW_EVENTS.DRAW_CONTENT)
 			{
-				SciterText txt = SciterText.Create("hi", new SciterXGraphics.SCITER_TEXT_FORMAT
-				{
-					fontFamily = "Arial", 
-					fontSize = 15,
-					fontWeight = 400,
-					lineHeight = 30
-				});
+				SciterText txt = SciterText.Create("hi", se._he);
 
 				using(SciterGraphics g = new SciterGraphics(prms.gfx))
 				{

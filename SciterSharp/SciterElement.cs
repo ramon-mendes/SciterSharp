@@ -27,7 +27,7 @@ using System.Collections;
 
 namespace SciterSharp
 {
-	public class SciterElement
+	public class SciterElement : IDisposable
 	{
 		private static SciterX.ISciterAPI _api = SciterX.API;
 		public IntPtr _he { get; private set; }
@@ -38,6 +38,7 @@ namespace SciterSharp
 			if(he == IntPtr.Zero)
 				throw new ArgumentException("IntPtr.Zero received at SciterElement constructor");
 
+			_api.Sciter_UseElement(he);
 			_he = he;
 		}
 
@@ -50,8 +51,45 @@ namespace SciterSharp
 			if(he == IntPtr.Zero)
 				throw new ArgumentException("IntPtr.Zero received at SciterElement constructor");
 
+			_api.Sciter_UseElement(_he);
 			_he = he;
 		}
+
+		#region IDisposable Support
+		private bool disposedValue = false; // To detect redundant calls
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if(!disposedValue)
+			{
+				if(disposing)
+				{
+					// TODO: dispose managed state (managed objects).
+				}
+
+				// TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+				// TODO: set large fields to null.
+				_api.Sciter_UnuseElement(_he);
+
+				disposedValue = true;
+			}
+		}
+
+		~SciterElement()
+		{
+			// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+			Dispose(false);
+		}
+
+		// This code added to correctly implement the disposable pattern.
+		public void Dispose()
+		{
+			// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+			Dispose(true);
+			// TODO: uncomment the following line if the finalizer is overridden above.
+			GC.SuppressFinalize(this);
+		}
+		#endregion
 
 		public static SciterElement Create(string tagname, string text = null)
 		{

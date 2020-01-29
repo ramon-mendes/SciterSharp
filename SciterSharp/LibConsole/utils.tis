@@ -26,6 +26,9 @@ namespace Utils
 	function readFileText(path)
 	{
 		var stream = Stream.openFile(path);
+		if(stream === null)
+			throw "Failed to open file " + path;
+			
 		var ret = readStreamToEnd(stream);
 		stream.close();
 		return ret;
@@ -36,6 +39,9 @@ namespace Utils
 		assert(typeof(data)==#string);
 
 		var stream = Stream.openFile(path, "w+");
+		if(stream === null)
+			throw "Failed to open file " + path;
+
 		stream.print(data);
 		stream.close();
 	}
