@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 <package >
-  <metadata>
-    <id>SciterSharpOSX</id>
-    <version>2.0.74</version>
-    <authors>MI Software</authors>
-    <owners>Ramon F. Mendes</owners>
-    <license type="expression">GPL-3.0-only</license>
-    <projectUrl>https://github.com/MISoftware/SciterSharp</projectUrl>
-    <iconUrl>http://cdn.misoftware.com.br/PublicImages/sciter-sharp.png</iconUrl>
-    <description>C# bindings for the Sciter engine</description>
-    <releaseNotes></releaseNotes>
-    <copyright>Copyright MI Software 2018</copyright>
-    <tags>Sciter HTML C#</tags>
-  </metadata>
-  <files>
-    <file src="bin/Release/SciterSharpOSX.dll" target="lib/xamarinmac20/SciterSharpOSX.dll" />
-    <!-- <file src="bin/Release/SciterSharpOSX.dll.config" target="lib/Xamarin.Mac20" /> -->
-  </files>
+	<metadata>
+		<id>SciterSharpOSX</id>
+		<version>2.0.74</version>
+		<authors>MI Software</authors>
+		<owners>Ramon F. Mendes</owners>
+		<license type="expression">GPL-3.0-only</license>
+		<projectUrl>https://github.com/ramon-mendes/SciterSharp</projectUrl>
+		<iconUrl>https://misoftware.com.br/cdn/PublicImages/sciter-sharp.png</iconUrl>
+		<description>C# bindings for the Sciter engine</description>
+		<releaseNotes></releaseNotes>
+		<copyright>Copyright MI Software 2018</copyright>
+		<tags>Sciter HTML C#</tags>
+	</metadata>
+	<files>
+		<file src="bin/Release/SciterSharpOSX.dll" target="lib/xamarinmac20/SciterSharpOSX.dll" />
+		<!-- <file src="bin/Release/SciterSharpOSX.dll.config" target="lib/Xamarin.Mac20" /> -->
+	</files>
 </package>
