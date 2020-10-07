@@ -26,7 +26,7 @@ namespace TestWinForms
 
 		private void SciterControl1_HandleCreated(object sender, EventArgs e)
 		{
-			var vm = SciterX.API.SciterGetVM(sciterControl1.Handle);
+			//var vm = SciterX.API.SciterGetVM(sciterControl1.Handle);
 			//AppWnd = new SciterWindow(sciterControl1.Handle);
 			//AppHost.Setup(AppWnd);
 		}

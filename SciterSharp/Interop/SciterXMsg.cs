@@ -44,7 +44,7 @@ namespace SciterSharp.Interop
 		{
 			SPT_DEFAULT = 0,
 			SPT_RECEIVER = 1,
-			SPT_DC = 2,
+			SPT_SURFACE = 2,
 		}
 
 		struct SCITER_X_MSG_PAINT
@@ -53,7 +53,7 @@ namespace SciterSharp.Interop
 			IntPtr element;// HELEMENT
 			bool isFore;
 			uint targetType;
-			IntPtr hdc_or_param;// HDC or VOID*
+			IntPtr pSurface_or_param;// LPVOID or VOID*
 			IntPtr callback;// ELEMENT_BITMAP_RECEIVER*
 		}
 	}

@@ -88,11 +88,6 @@
   <ItemGroup>
     <None Include="res\glyphs.html" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="sciter.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>$(ProjectDir)scripts\packWindows.bat $(ConfigurationName)</PreBuildEvent>

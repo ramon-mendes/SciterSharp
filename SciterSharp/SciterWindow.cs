@@ -418,10 +418,10 @@ namespace SciterSharp
 			}
 		}
 
-		public IntPtr VM
+		/*public IntPtr VM
 		{
 			get { return _api.SciterGetVM(_hwnd); }
-		}
+		}*/
 
 #if WINDOWS
 		public Icon Icon

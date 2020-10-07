@@ -89,7 +89,7 @@ namespace SciterSharp
 			_api.SciterSetCallback(hwnd, Marshal.GetFunctionPointerForDelegate(_cbk), IntPtr.Zero);
 		}
 
-		public void InjectGlobalTISript(string script)
+		/*public void InjectGlobalTISript(string script)
 		{
 			var ret = new TIScript.tiscript_value();
 			var res = EvalGlobalTISript(script, out ret);
@@ -113,7 +113,7 @@ namespace SciterSharp
 			var vm = SciterX.API.SciterGetVM(_hwnd);
 
 			return SciterX.TIScriptAPI.get_value_by_path(vm, out ret, path);
-		}
+		}*/
 
 		/// <summary>
 		/// Attaches a window level event-handler: it receives every event for all elements of the page.

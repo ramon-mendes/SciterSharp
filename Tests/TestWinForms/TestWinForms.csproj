@@ -88,9 +88,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\..\..\sciter-sdk\bin\64\sciter.dll">
+    <Content Include="..\..\..\..\sciter-sdk\bin.win\x64\sciter.dll">
       <Link>sciter.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

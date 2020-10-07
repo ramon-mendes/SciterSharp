@@ -254,18 +254,6 @@ namespace SciterSharp
 						return bOK;
 					}
 
-				case SciterXBehaviors.EVENT_GROUPS.HANDLE_TISCRIPT_METHOD_CALL:
-					/*
-					COMMENTED BECAUSE THIS EVENT IS NEVER USED, AND JUST ADDS MORE CONFUSION
-					INSTEAD, IT'S BETTER TO HANDLE EVENT_GROUPS.HANDLE_SCRIPTING_METHOD_CALL/OnScriptCall
-						{
-							SciterXBehaviors.TISCRIPT_METHOD_PARAMS p = Marshal.PtrToStructure<SciterXBehaviors.TISCRIPT_METHOD_PARAMS>(prms);
-							bool res = OnScriptCall(se, p);
-							return res;
-						}
-					*/
-					return false;
-
 				case SciterXBehaviors.EVENT_GROUPS.HANDLE_EXCHANGE:
 					{
 						SciterXBehaviors.EXCHANGE_PARAMS p = (SciterXBehaviors.EXCHANGE_PARAMS)Marshal.PtrToStructure(prms, typeof(SciterXBehaviors.EXCHANGE_PARAMS));
@@ -279,7 +267,7 @@ namespace SciterSharp
 					}
 
 				default:
-					Debug.Assert(false);
+					//Debug.Assert(false);
 					return false;
 			}
 		}

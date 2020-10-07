@@ -39,10 +39,10 @@ namespace SciterSharp.Interop
 		{
 			get { return LoadRequestAPI(); }
 		}
-        public static TIScript.ISciterTIScriptAPI TIScriptAPI
+		/*public static TIScript.ISciterTIScriptAPI TIScriptAPI
         {
             get { return LoadTIScriptAPI(); }
-        }
+        }*/
 
         public static string Version
 		{
@@ -60,7 +60,7 @@ namespace SciterSharp.Interop
 		private static ISciterAPI? _api = null;
 		private static SciterXGraphics.ISciterGraphicsAPI? _gapi = null;
 		private static SciterXRequest.ISciterRequestAPI? _rapi = null;
-		private static TIScript.ISciterTIScriptAPI? _tiapi = null;
+		//private static TIScript.ISciterTIScriptAPI? _tiapi = null;
 
 #if WINDOWS
 		public static bool Use3264DLLNaming { get; set; }
@@ -91,7 +91,7 @@ namespace SciterSharp.Interop
 			#if WINDOWS
 				if(IntPtr.Size == 8)
 				{
-					Debug.Assert(api_struct_size == 684 * 2);
+					Debug.Assert(api_struct_size == (684 + 24) * 2);
 					if(Use3264DLLNaming)
 						api_ptr = SciterAPI64();
 					else
@@ -99,7 +99,7 @@ namespace SciterSharp.Interop
 				}
 				else
 				{
-					Debug.Assert(api_struct_size == 684);
+					Debug.Assert(api_struct_size == 684 + 24);
 					if(Use3264DLLNaming)
 						api_ptr = SciterAPI32();
 					else
@@ -124,7 +124,7 @@ namespace SciterSharp.Interop
 				uint major = _api.Value.SciterVersion(1);
 				uint minor = _api.Value.SciterVersion(0);
 				Debug.Assert(major >= 0x00040000);
-				Debug.Assert(_api.Value.version==0);
+				Debug.Assert(_api.Value.version <= 6);
 			}
 
 			return _api.Value;
@@ -166,7 +166,7 @@ namespace SciterSharp.Interop
 			return _rapi.Value;
 		}
 
-		private static TIScript.ISciterTIScriptAPI LoadTIScriptAPI()
+		/*private static TIScript.ISciterTIScriptAPI LoadTIScriptAPI()
 		{
 			if(_tiapi == null)
 			{
@@ -181,7 +181,7 @@ namespace SciterSharp.Interop
 				_tiapi = (TIScript.ISciterTIScriptAPI)Marshal.PtrToStructure(api_ptr, typeof(TIScript.ISciterTIScriptAPI));
 			}
 			return _tiapi.Value;
-		}
+		}*/
 
 		[StructLayout(LayoutKind.Sequential)]
 		public struct ISciterAPI
@@ -361,11 +361,16 @@ namespace SciterSharp.Interop
 			public FPTR_ValueIsNativeFunctor ValueIsNativeFunctor;
 
 			// tiscript VM API
-			public FPTR_TIScriptAPI TIScriptAPI;
+			public IntPtr reserved1;
+			public IntPtr reserved2;
+			public IntPtr reserved3;
+			public IntPtr reserved4;
+
+			/*public FPTR_TIScriptAPI TIScriptAPI;
 			public FPTR_SciterGetVM SciterGetVM;
 
 			public FPTR_Sciter_v2V Sciter_v2V;
-			public FPTR_Sciter_V2v Sciter_V2v;
+			public FPTR_Sciter_V2v Sciter_V2v;*/
 
 			public FPTR_SciterOpenArchive SciterOpenArchive;
 			public FPTR_SciterGetArchiveItem SciterGetArchiveItem;
@@ -386,6 +391,12 @@ namespace SciterSharp.Interop
 
 			public FPTR_SciterProcX SciterProcX;
 
+			public FPTR_SciterAtomValue SciterAtomValue;
+			public FPTR_SciterAtomNameCB SciterAtomNameCB;
+			public FPTR_SciterSetGlobalAsset SciterSetGlobalAsset;
+			public FPTR_SciterGetElementAsset SciterGetElementAsset;
+			public FPTR_SciterSetVariable SciterSetVariable;
+			public FPTR_SciterGetVariable SciterGetVariable;
 
 
 			// JUST FOR NOTE, IF NECESSARY TO DECORATED THE CallingConvention OR CharSet OF THE FPTR's use:
@@ -629,9 +640,9 @@ namespace SciterSharp.Interop
 			//SCDOM_RESULT function( HELEMENT he, VALUE* pval, BOOL forceCreation ) SciterGetExpando;
 			public delegate SciterXDom.SCDOM_RESULT FPTR_SciterGetExpando(IntPtr he, out SciterXValue.VALUE pval, bool forceCreation);
 			//SCDOM_RESULT function( HELEMENT he, tiscript_value* pval, BOOL forceCreation ) SciterGetObject;
-			public delegate SciterXDom.SCDOM_RESULT FPTR_SciterGetObject(IntPtr he, out TIScript.tiscript_value pval, bool forceCreation);
+			public delegate SciterXDom.SCDOM_RESULT FPTR_SciterGetObject(IntPtr he, out IntPtr pval, bool forceCreation);
 			//SCDOM_RESULT function( HELEMENT he, tiscript_value* pval) SciterGetElementNamespace;
-			public delegate SciterXDom.SCDOM_RESULT FPTR_SciterGetElementNamespace(IntPtr he, out TIScript.tiscript_value pval);
+			public delegate SciterXDom.SCDOM_RESULT FPTR_SciterGetElementNamespace(IntPtr he, out IntPtr pval);
 			//SCDOM_RESULT function( HWINDOW hwnd, HELEMENT* phe) SciterGetHighlightedElement;
 			public delegate SciterXDom.SCDOM_RESULT FPTR_SciterGetHighlightedElement(IntPtr hwnd, out IntPtr phe);
 			//SCDOM_RESULT function( HWINDOW hwnd, HELEMENT he) SciterSetHighlightedElement;
@@ -781,6 +792,24 @@ namespace SciterSharp.Interop
 
 			// BOOL SCFN(SciterProcX)(HWINDOW hwnd, SCITER_X_MSG* pMsg ); // returns TRUE if handled
 			public delegate bool FPTR_SciterProcX(IntPtr hwnd, IntPtr pMsg);
+
+			// UINT64 SCFN(SciterAtomValue)(const char* name);
+			public delegate long FPTR_SciterAtomValue(string name);
+
+			// BOOL SCFN(SciterAtomNameCB)(UINT64 atomv, LPCSTR_RECEIVER* rcv, LPVOID rcv_param);
+			public delegate bool FPTR_SciterAtomNameCB(long atomv, IntPtr rxc, IntPtr rcv_param);
+
+			// BOOL SCFN(SciterSetGlobalAsset)(som_asset_t* pass);
+			public delegate bool FPTR_SciterSetGlobalAsset(IntPtr pass);
+
+			// SCDOM_RESULT SCFN(SciterGetElementAsset)(HELEMENT el, UINT64 nameAtom, som_asset_t** ppass);
+			public delegate SciterXDom.SCDOM_RESULT FPTR_SciterGetElementAsset(IntPtr el, long nameAtom, out IntPtr ppass);
+
+			// BOOL SCFN(SciterSetVariable)(HWINDOW hwndOrNull, LPCWSTR path, const VALUE* pval_to_set);
+			public delegate bool FPTR_SciterSetVariable(IntPtr hwndOrNull, IntPtr path, ref SciterXValue.VALUE pval_to_set);
+
+			// BOOL SCFN(SciterGetVariable)(HWINDOW hwndOrNull, LPCWSTR path, VALUE* pval_to_get);
+			public delegate bool FPTR_SciterGetVariable(IntPtr hwndOrNull, string path, ref SciterXValue.VALUE pval_to_get);
 		}
 	}
 }

@@ -173,14 +173,14 @@ namespace SciterSharp.Interop
 			public delegate bool FPTR_is_undefined(ref tiscript_value v);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-			public delegate bool FPTR_eval_string(IntPtr tiscript_VM_ptr, tiscript_value ns, [MarshalAs(UnmanagedType.LPWStr)]string script, uint script_length, out tiscript_value pretval);
+			public delegate bool FPTR_eval_string(IntPtr tiscript_VM_ptr, tiscript_value ns, [MarshalAs(UnmanagedType.LPWStr)] string script, uint script_length, out tiscript_value pretval);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-			public delegate bool FPTR_get_value_by_path(IntPtr tiscript_VM_ptr, out tiscript_value ns, [MarshalAs(UnmanagedType.LPStr)]string path);
+			public delegate bool FPTR_get_value_by_path(IntPtr tiscript_VM_ptr, out tiscript_value ns, [MarshalAs(UnmanagedType.LPStr)] string path);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			public delegate int FPTR_get_length(IntPtr tiscript_VM_ptr, tiscript_value obj);
-			
+
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
@@ -188,9 +188,9 @@ namespace SciterSharp.Interop
 		{
 			ulong value;
 
-			public bool IsString { get { return SciterX.TIScriptAPI.is_string(ref this); } }
+			/*public bool IsString { get { return SciterX.TIScriptAPI.is_string(ref this); } }
 			public bool IsUndefined { get { return SciterX.TIScriptAPI.is_undefined(ref this); } }
-			public int Length { get { return SciterX.TIScriptAPI.get_length(SciterX.TIScriptAPI.get_current_vm(), this); } }
+			public int Length { get { return SciterX.TIScriptAPI.get_length(SciterX.TIScriptAPI.get_current_vm(), this); } }*/
 		}
 	}
 }
