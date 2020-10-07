@@ -43,7 +43,7 @@ namespace SciterSharp
 #endif
 
 	public class SciterWindow
-#if WINDOWS
+#if WINDOWS && !CORE
 		: System.Windows.Forms.IWin32Window
 #endif
 	{

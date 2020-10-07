@@ -6,8 +6,8 @@
 		<authors>$author$</authors>
 		<owners>Ramon F. Mendes</owners>
 		<license type="expression">GPL-3.0-only</license>
-		<projectUrl>https://github.com/MISoftware/SciterSharp</projectUrl>
-		<iconUrl>http://cdn.misoftware.com.br/PublicImages/sciter-sharp.png</iconUrl>
+		<projectUrl>https://github.com/ramon-mendes/SciterSharp</projectUrl>
+		<iconUrl>https://misoftware.com.br/cdn/PublicImages/sciter-sharp.png</iconUrl>
 		<description>$description$</description>
 		<releaseNotes></releaseNotes>
 		<copyright>Copyright MI Software 2018</copyright>
