@@ -77,12 +77,6 @@
   <ItemGroup>
     <None Include="res\index.html" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\SciterSharp\SciterSharpWindows.csproj">
-      <Project>{18b2e4e7-cb77-44c3-865b-be05620aba4d}</Project>
-      <Name>SciterSharpWindows</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>$(ProjectDir)scripts\packWindows.bat $(ConfigurationName)</PreBuildEvent>

@@ -82,12 +82,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SciterSharp\SciterSharpWindows.csproj">
-      <Project>{18b2e4e7-cb77-44c3-865b-be05620aba4d}</Project>
-      <Name>SciterSharpWindows</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="..\..\..\..\sciter-sdk\bin.win\x64\sciter.dll">
       <Link>sciter.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

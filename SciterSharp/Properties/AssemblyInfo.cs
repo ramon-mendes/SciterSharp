@@ -5,7 +5,7 @@ using SciterSharp;
 
 
 #if WINDOWS
-[assembly: AssemblyTitle("SciterSharpWindows")]
+	[assembly: AssemblyTitle("SciterSharpWindows")]
 	[assembly: AssemblyProduct("SciterSharpWindows")]
 #elif GTKMONO
 	[assembly: AssemblyTitle("SciterSharpGTK")]
