@@ -91,7 +91,7 @@ namespace SciterSharp.Interop
 			#if WINDOWS
 				if(IntPtr.Size == 8)
 				{
-					Debug.Assert(api_struct_size == (684 + 24) * 2);
+					Debug.Assert(api_struct_size == 1464);
 					if(Use3264DLLNaming)
 						api_ptr = SciterAPI64();
 					else
@@ -99,7 +99,7 @@ namespace SciterSharp.Interop
 				}
 				else
 				{
-					Debug.Assert(api_struct_size == 684 + 24);
+					Debug.Assert(api_struct_size == 1464/2);
 					if(Use3264DLLNaming)
 						api_ptr = SciterAPI32();
 					else
@@ -124,7 +124,7 @@ namespace SciterSharp.Interop
 				uint major = _api.Value.SciterVersion(1);
 				uint minor = _api.Value.SciterVersion(0);
 				Debug.Assert(major >= 0x00040000);
-				Debug.Assert(_api.Value.version <= 6);
+				Debug.Assert(_api.Value.version <= 9);
 			}
 
 			return _api.Value;
@@ -134,8 +134,8 @@ namespace SciterSharp.Interop
 		{
 			if(_gapi == null)
 			{
-				uint major = _api.Value.SciterVersion(1);
-				uint minor = _api.Value.SciterVersion(0);
+				uint major = API.SciterVersion(1);
+				uint minor = API.SciterVersion(0);
 				Debug.Assert(major >= 0x00040000);
 
 				int api_struct_size = Marshal.SizeOf(typeof(SciterXGraphics.ISciterGraphicsAPI));
@@ -223,9 +223,13 @@ namespace SciterSharp.Interop
 			public FPTR_SciterSetHomeURL SciterSetHomeURL;
 #if OSX
 			public FPTR_SciterCreateNSView SciterCreateNSView;
+#else
+			private IntPtr SciterCreateNSView;
 #endif
 #if GTKMONO
 			public FPTR_SciterCreateWidget SciterCreateWidget;
+#else
+			private IntPtr SciterCreateWidget;
 #endif
 			public FPTR_SciterCreateWindow SciterCreateWindow;
 			public FPTR_SciterSetupDebugOutput SciterSetupDebugOutput;
@@ -366,12 +370,6 @@ namespace SciterSharp.Interop
 			public IntPtr reserved3;
 			public IntPtr reserved4;
 
-			/*public FPTR_TIScriptAPI TIScriptAPI;
-			public FPTR_SciterGetVM SciterGetVM;
-
-			public FPTR_Sciter_v2V Sciter_v2V;
-			public FPTR_Sciter_V2v Sciter_V2v;*/
-
 			public FPTR_SciterOpenArchive SciterOpenArchive;
 			public FPTR_SciterGetArchiveItem SciterGetArchiveItem;
 			public FPTR_SciterCloseArchive SciterCloseArchive;
@@ -397,6 +395,11 @@ namespace SciterSharp.Interop
 			public FPTR_SciterGetElementAsset SciterGetElementAsset;
 			public FPTR_SciterSetVariable SciterSetVariable;
 			public FPTR_SciterGetVariable SciterGetVariable;
+
+			public FPTR_SciterElementUnwrap SciterElementUnwrap;
+			public FPTR_SciterElementWrap SciterElementWrap;
+			public FPTR_SciterNodeUnwrap SciterNodeUnwrap;
+			public FPTR_SciterNodeWrap SciterNodeWrap;
 
 
 			// JUST FOR NOTE, IF NECESSARY TO DECORATED THE CallingConvention OR CharSet OF THE FPTR's use:
@@ -810,6 +813,18 @@ namespace SciterSharp.Interop
 
 			// BOOL SCFN(SciterGetVariable)(HWINDOW hwndOrNull, LPCWSTR path, VALUE* pval_to_get);
 			public delegate bool FPTR_SciterGetVariable(IntPtr hwndOrNull, string path, ref SciterXValue.VALUE pval_to_get);
+
+			// UINT SCFN(SciterElementUnwrap)(const VALUE* pval, HELEMENT* ppElement);
+			public delegate bool FPTR_SciterElementUnwrap(IntPtr pval, IntPtr ppElement);
+
+			// UINT SCFN(SciterElementWrap)(VALUE* pval, HELEMENT pElement);
+			public delegate bool FPTR_SciterElementWrap(IntPtr pval, IntPtr pElement);
+
+			// UINT SCFN(SciterNodeUnwrap)(const VALUE* pval, HNODE* ppNode);
+			public delegate bool FPTR_SciterNodeUnwrap(IntPtr pval, IntPtr ppNode);
+
+			// UINT SCFN(SciterNodeWrap)(VALUE* pval, HNODE pNode);
+			public delegate bool FPTR_SciterNodeWrap(IntPtr pval, IntPtr pNode);
 		}
 	}
 }

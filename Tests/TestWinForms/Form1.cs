@@ -8,27 +8,27 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SciterSharp;
-using SciterSharp.Interop;
+using SciterSharp.WinForms;
 
 namespace TestWinForms
 {
-	public partial class Form1 : Form
-	{
-		public Form1()
+    public partial class Form1 : Form
+    {
+        private SciterControl ctrl;
+
+        public Form1()
+        {
+            InitializeComponent();
+
+            ctrl = new SciterControl();
+            ctrl.Dock = DockStyle.Fill;
+			ctrl.HandleCreated += Ctrl_HandleCreated;
+            Controls.Add(ctrl);
+        }
+
+		private void Ctrl_HandleCreated(object sender, EventArgs e)
 		{
-			InitializeComponent();
-
-			sciterControl1.HandleCreated += SciterControl1_HandleCreated;
-		}
-
-		private SciterWindow AppWnd;
-		private Host AppHost = new Host();
-
-		private void SciterControl1_HandleCreated(object sender, EventArgs e)
-		{
-			//var vm = SciterX.API.SciterGetVM(sciterControl1.Handle);
-			//AppWnd = new SciterWindow(sciterControl1.Handle);
-			//AppHost.Setup(AppWnd);
-		}
+            ctrl.SciterWnd.LoadHtml("teste");
+        }
 	}
 }

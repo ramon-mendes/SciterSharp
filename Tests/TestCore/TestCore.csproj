@@ -82,6 +82,12 @@
   <ItemGroup>
     <None Include="res\glyphs.html" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\SciterSharp\SciterSharpWindowsCore.csproj">
+      <Project>{9110e187-619c-4c10-91ee-7457127d354d}</Project>
+      <Name>SciterSharpWindowsCore</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>$(ProjectDir)scripts\packWindows.bat $(ConfigurationName)</PreBuildEvent>

@@ -60,11 +60,11 @@ namespace TestIdioms
 		public void SetupPage(string page_from_res_folder)
 		{
 		#if DEBUG
-			string path = Environment.CurrentDirectory + "/../../res/" + page_from_res_folder;
+			string path = Path.GetFullPath(Environment.CurrentDirectory + "/../../../res/" + page_from_res_folder);
 			Debug.Assert(File.Exists(path));
             path = path.Replace('\\', '/');
 
-			string url = "file:///" + path;
+			string url = "file://" + path;
 		#else
 			string url = "archive://app/" + page_from_res_folder;
 		#endif

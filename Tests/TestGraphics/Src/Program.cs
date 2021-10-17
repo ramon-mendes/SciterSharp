@@ -27,9 +27,6 @@ namespace TestGraphics
 			wnd.CreateMainWindow(1500, 800);
 			wnd.CenterTopLevelWindow();
 			wnd.Title = "Sciter Bootstrap";
-#if WINDOWS
-			wnd.Icon = Properties.Resources.IconMain;
-#endif
 
 			// Prepares SciterHost and then load the page
 			var host = new Host();

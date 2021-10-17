@@ -23,7 +23,6 @@ namespace TestIdioms
 			wnd.CreateMainWindow(1500, 800);
 			wnd.CenterTopLevelWindow();
 			wnd.Title = "TestIdioms";
-			wnd.Icon = Properties.Resources.IconMain;
 
 			// Prepares SciterHost and then load the page
 			var host = new Host();
