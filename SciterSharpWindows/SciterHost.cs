@@ -51,14 +51,14 @@ namespace SciterSharp
 			_arch = new SciterArchive();
 			_arch.Open(ArchiveResource.resources);
 
-			if(InjectLibConsole)
+			/*if(InjectLibConsole)
 			{
 				byte[] byteArray = Encoding.UTF8.GetBytes("include \"scitersharp:console.tis\";");
 				GCHandle pinnedArray = GCHandle.Alloc(byteArray, GCHandleType.Pinned);
 				IntPtr pointer = pinnedArray.AddrOfPinnedObject();
 				SciterX.API.SciterSetOption(IntPtr.Zero, SciterXDef.SCITER_RT_OPTIONS.SCITER_SET_INIT_SCRIPT, pointer);
 				pinnedArray.Free();
-			}
+			}*/
 		}
 
 		public SciterHost() { }

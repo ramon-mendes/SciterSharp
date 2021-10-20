@@ -14,10 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\SciterSharpWindows\SciterSharpWindowsCore.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="sciter.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -20,7 +20,7 @@ namespace TestCore
 		{
 			result = new SciterValue(argss =>
 			{
-				return new SciterValue();
+				return new SciterValue(123);
 			});
 			return true;
 		}

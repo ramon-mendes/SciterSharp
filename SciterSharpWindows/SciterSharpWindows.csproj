@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A674CC08-2108-4DD9-A5AF-D4425F6B5EE8}</ProjectGuid>
+    <ProjectGuid>{52AD5281-C468-4986-B76C-04BE7FE54E98}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SciterSharpWindows</RootNamespace>
+    <RootNamespace>SciterSharp</RootNamespace>
     <AssemblyName>SciterSharpWindows</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -29,6 +29,12 @@
     <DefineConstants>TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>SciterMidi.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -67,7 +73,6 @@
     <Compile Include="SciterEventHandler.cs" />
     <Compile Include="SciterGraphics.cs" />
     <Compile Include="SciterHost.cs" />
-    <Compile Include="SciterRequest.cs" />
     <Compile Include="SciterValue.cs" />
     <Compile Include="SciterWindow.cs" />
     <Compile Include="WinForms\SciterControl.cs">
@@ -75,8 +80,17 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="LibConsole\console.tis" />
-    <None Include="LibConsole\utils.tis" />
+    <Content Include="res\LibConsoleTIS\popup.css" />
+    <Content Include="res\LibConsoleTIS\show_data.html" />
+    <Content Include="res\LibConsoleTIS\show_img.html" />
+    <Content Include="res\LibConsoleTIS\tracewnd.html" />
+    <Content Include="res\LibConsoleTIS\unittest.html" />
+    <Content Include="scripts\fart.exe" />
+    <Content Include="scripts\packfolder.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\LibConsoleTIS\console.tis" />
+    <None Include="res\LibConsoleTIS\utils.tis" />
     <None Include="SciterMidi.snk" />
     <None Include="scripts\packfolder" />
     <None Include="scripts\packOSX.sh" />
@@ -84,13 +98,10 @@
     <None Include="version.json" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="LibConsole\popup.css" />
-    <Content Include="LibConsole\show_data.html" />
-    <Content Include="LibConsole\show_img.html" />
-    <Content Include="LibConsole\tracewnd.html" />
-    <Content Include="LibConsole\unittest.html" />
-    <Content Include="scripts\fart.exe" />
-    <Content Include="scripts\packfolder.exe" />
+    <Folder Include="res\LibConsoleJS\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>$(ProjectDir)/scripts/packWindows.bat</PreBuildEvent>
+  </PropertyGroup>
 </Project>

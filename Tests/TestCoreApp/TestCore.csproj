@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\SciterSharp\SciterSharpWindowsCore.csproj" />
+    <ProjectReference Include="..\..\SciterSharpWindows\SciterSharpWindowsCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>
