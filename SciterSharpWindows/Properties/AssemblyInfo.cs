@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using SciterSharp;
 
-
 #if WINDOWS
 	[assembly: AssemblyTitle("SciterSharpWindows")]
 	[assembly: AssemblyProduct("SciterSharpWindows")]

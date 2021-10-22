@@ -58,6 +58,7 @@ namespace TestCore
 			host.Setup(wnd);
 			host.AttachEvh(new HostEvh());
 			host.SetupPage("index.html");
+			host.CallFunction("Wow");
 			//host.DebugInspect();
 
 			//byte[] css_bytes = File.ReadAllBytes(@"D:\ProjetosSciter\AssetsDrop\AssetsDrop\res\css\global.css");
