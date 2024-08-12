@@ -1,20 +1,33 @@
-![](http://misoftware.com.br/Content/BlogCDN/csharp-bindings.png)
-
-Windows NuGet: ![NuGet](https://img.shields.io/nuget/v/SciterSharpWindows.svg?style=flat)
-
-Linux/MONO/GTK NuGet: ![NuGet](https://img.shields.io/nuget/v/SciterSharpGTK.svg?style=flat)
-
-OSX/Xamarin.Mac NuGet: ![NuGet](https://img.shields.io/nuget/v/SciterSharpOSX.svg?style=flat)
-
 ## Cross-platform Sciter bindings for .NET
 
-This library provides bindings of Sciter C/C++ headers to the C# language. [Sciter](http://sciter.com/download/) is a multi-platform HTML engine. With this library you can create C#/.NET desktop applications using not just HTML, but all the features of Sciter: CSS3, SVG, scripting, AJAX, &lt;video&gt;, ... Sciter is free for commercial use. If you want to use SciterSharp in a commercial product you should acquire a commercial license.
+This library provides bindings of Sciter C/C++ headers to the C# language.
+
+[Sciter](http://sciter.com/download/) is a multi-platform HTML engine. With this library you can create C#/.NET desktop applications using not just HTML, but all the features of Sciter: CSS3, SVG, scripting, AJAX, &lt;video&gt;, ... Sciter is free for commercial use. If you want to use SciterSharp in a commercial product you should acquire a commercial license.
 
 The source is made portable to work in Windows, Linux/GTK+3/Mono and OSX/Mono.
 
-License: **GNU GENERAL PUBLIC LICENSE Version 3**
+License: **MIT**
 
-Comercial License: **for inquiries, [contact me](mailto:ramon@misoftware.com.br)**
+## Comercial SUPPORT:
+
+I don't really have time to mantain this code anymore.
+But if you any specific help, reach me out **[for inquiries](mailto:r.fernandes.mendes@avanade.com)**
+
+## NuGet
+
+_These nugets are very outdated..._
+
+```
+Windows package:
+PM> Install-Package SciterSharpWindows
+
+Linux/GTK+3/Mono package:
+PM> Install-Package SciterSharpGTK
+
+OSX/Mono package:
+PM> Install-Package SciterSharpOSX
+```
+
 
 ## Documentation
 
@@ -53,19 +66,6 @@ Quick start your desktop app with our [Sciter Bootstrap](http://misoftware.com.b
 All projects come with this library already configured and the necessary boilterplate code to create a Sciter window and load its initial HTML file.
 
 The cross-platform template contains a solution with 3 projects, allowing you to build for **Windows** (Visual Studio), for **OSX** (Visual Studio MAC), and for **Linux** (MonoDevelop).
-
-### NuGet
-
-```
-Windows package:
-PM> Install-Package SciterSharpWindows
-
-Linux/GTK+3/Mono package:
-PM> Install-Package SciterSharpGTK
-
-OSX/Mono package:
-PM> Install-Package SciterSharpOSX
-```
 
 ### From Source
 
