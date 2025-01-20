@@ -11,7 +11,7 @@ License: **MIT**
 ## Comercial SUPPORT:
 
 I don't really have time to mantain this code anymore.
-But if you any specific help, reach me out **[for inquiries](mailto:r.fernandes.mendes@avanade.com)**
+But if you any specific help, reach me out **[for inquiries](mailto:rfmendesbrazil@gmail.com)**
 
 ## NuGet
 
