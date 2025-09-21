@@ -40,9 +40,12 @@ namespace SciterSharp
 		private SciterXDef.FPTR_SciterHostCallback _cbk;
 		private SciterEventHandler _window_evh;
 
-		public static bool InjectLibConsole = true;
+		/*
+		// REMOVI esse acoplamento, movi os arquivos para: https://github.com/ramon-mendes/SciterLibConsole
+
 		private static List<IntPtr> _lib_console_vms = new List<IntPtr>();
 		private static SciterArchive _arch;
+		public static bool InjectLibConsole = false;
 
 		private class DefaultEVH : SciterEventHandler { }
 
@@ -51,15 +54,15 @@ namespace SciterSharp
 			_arch = new SciterArchive();
 			_arch.Open(ArchiveResource.resources);
 
-			/*if(InjectLibConsole)
+			if(InjectLibConsole)
 			{
 				byte[] byteArray = Encoding.UTF8.GetBytes("include \"scitersharp:console.tis\";");
 				GCHandle pinnedArray = GCHandle.Alloc(byteArray, GCHandleType.Pinned);
 				IntPtr pointer = pinnedArray.AddrOfPinnedObject();
 				SciterX.API.SciterSetOption(IntPtr.Zero, SciterXDef.SCITER_RT_OPTIONS.SCITER_SET_INIT_SCRIPT, pointer);
 				pinnedArray.Free();
-			}*/
-		}
+			}
+		}*/
 
 		public SciterHost() { }
 
@@ -393,12 +396,13 @@ namespace SciterSharp
 		{
 			Debug.Assert(_hwnd != IntPtr.Zero, "Call SciterHost.SetupWindow() first");
 
-			if(InjectLibConsole && sld.uri.StartsWith("scitersharp:"))
+			/*if(InjectLibConsole && sld.uri.StartsWith("scitersharp:"))
 			{
 				var data = _arch.Get(sld.uri.Substring("scitersharp:".Length));
 				if(data != null)
 					_api.SciterDataReady(_hwnd, sld.uri, data, (uint)data.Length);
-			}
+			}*/
+
 			return (uint)SciterXDef.LoadResult.LOAD_OK;
 		}
 		protected virtual void OnDataLoaded(SciterXDef.SCN_DATA_LOADED sdl) { }
