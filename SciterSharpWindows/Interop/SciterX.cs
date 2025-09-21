@@ -88,7 +88,7 @@ namespace SciterSharp.Interop
 				int api_struct_size = Marshal.SizeOf(typeof(ISciterAPI));
 				IntPtr api_ptr;
 
-			#if WINDOWS
+#if WINDOWS
 				if(IntPtr.Size == 8)
 				{
 					Debug.Assert(api_struct_size == 1464);
