@@ -10,7 +10,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;WINDOWS,CORE</DefineConstants>
+    <DefineConstants>$(DefineConstants);SCITER_JS</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>$(DefineConstants);SCITER_JS</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
