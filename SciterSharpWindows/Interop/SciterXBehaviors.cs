@@ -98,15 +98,15 @@ namespace SciterSharp.Interop
 			public INITIALIZATION_EVENTS cmd;
 		}
 
-		enum SOM_EVENTS
+		public enum SOM_EVENTS
 		{
 			SOM_GET_PASSPORT = 0,
 			SOM_GET_ASSET = 1
 		}
 
-		struct SOM_PARAMS
+		public struct SOM_PARAMS
 		{
-			uint cmd; // SOM_EVENTS
+			SOM_EVENTS cmd;
 			IntPtr passport_or_asset;// som_passport_t* or som_asset_t*
 		}
 

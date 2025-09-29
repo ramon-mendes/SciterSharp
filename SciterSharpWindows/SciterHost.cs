@@ -384,6 +384,14 @@ namespace SciterSharp
 					OnGraphicsCriticalFailure(cgf.hwnd);
 					return 0;
 
+#if SCITER_JS
+				case SciterXDef.SC_KEYBOARD_REQUEST:
+				case SciterXDef.SC_INVALIDATE_RECT:
+				case SciterXDef.SC_SET_CURSOR:
+					// haven't yet implemented the on_xyx_notification() handler
+					return 0;
+#endif
+
 				default:
 					Debug.Assert(false);
 					break;

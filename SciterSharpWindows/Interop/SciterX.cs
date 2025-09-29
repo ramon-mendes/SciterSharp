@@ -412,6 +412,22 @@ namespace SciterSharp.Interop
 
 			public FPTR_SciterAtomValue SciterAtomValue;
 			public FPTR_SciterAtomNameCB SciterAtomNameCB;
+
+#if !SCITER_JS
+			// this was the last commit of Sciter.TIS ABI: https://github.com/c-smile/sciter-sdk/blob/f33df075d9eb2f8d252cb88f1b2c8096e56197ed/include/sciter-x-api.h
+			public FPTR_SciterSetGlobalAsset SciterSetGlobalAsset;
+			public FPTR_SciterGetElementAsset SciterGetElementAsset;
+
+			public FPTR_SciterSetVariable SciterSetVariable;
+			public FPTR_SciterGetVariable SciterGetVariable;
+
+			public FPTR_SciterElementUnwrap SciterElementUnwrap;
+			public FPTR_SciterElementWrap SciterElementWrap;
+			public FPTR_SciterNodeUnwrap SciterNodeUnwrap;
+			public FPTR_SciterNodeWrap SciterNodeWrap;
+
+			public FPTR_SciterReleaseGlobalAsset SciterReleaseGlobalAsset;
+#else
 			public FPTR_SciterSetGlobalAsset SciterSetGlobalAsset;
 			public FPTR_SciterGetElementAsset SciterGetElementAsset;
 			public FPTR_SciterSetVariable SciterSetVariable;
@@ -430,6 +446,7 @@ namespace SciterSharp.Interop
 			public FPTR_SciterEGLGetProcAddress SciterEGLGetProcAddress;
 			public FPTR_SciterEGLSendEvent SciterEGLSendEvent;
 			public FPTR_SciterRequestAnimationFrameEvent SciterRequestAnimationFrameEvent;
+#endif
 		}
 
 		public class FPTRs

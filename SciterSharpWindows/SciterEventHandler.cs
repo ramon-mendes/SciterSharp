@@ -126,6 +126,12 @@ namespace SciterSharp
 		protected virtual bool OnGesture(SciterElement se, SciterXBehaviors.GESTURE_PARAMS prms) { return false; }
 		protected virtual bool OnExchange(SciterElement se, SciterXBehaviors.EXCHANGE_PARAMS prms) { return false; }
 
+		protected virtual bool OnSOM(SciterElement se, SciterXBehaviors.SOM_PARAMS prms)
+		{
+			return false;
+		}
+
+
 		// EventProc
 		private bool EventProc(IntPtr tag, IntPtr he, uint evtg, IntPtr prms)
 		{
@@ -266,8 +272,14 @@ namespace SciterSharp
 						return OnGesture(se, p);
 					}
 
+				case SciterXBehaviors.EVENT_GROUPS.HANDLE_SOM:
+					{
+						SciterXBehaviors.SOM_PARAMS p = (SciterXBehaviors.SOM_PARAMS)Marshal.PtrToStructure(prms, typeof(SciterXBehaviors.SOM_PARAMS));
+						return OnSOM(se, p);
+					}
+
 				default:
-					//Debug.Assert(false);
+					Debug.Assert(false);
 					return false;
 			}
 		}

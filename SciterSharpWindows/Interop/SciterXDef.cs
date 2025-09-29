@@ -58,7 +58,13 @@ namespace SciterSharp.Interop
 		public const uint SC_ATTACH_BEHAVIOR = 0x04;
 		public const uint SC_ENGINE_DESTROYED = 0x05;
 		public const uint SC_POSTED_NOTIFICATION = 0x06;
+
+#if SCITER_JS
 		public const uint SC_GRAPHICS_CRITICAL_FAILURE = 0x07;
+		public const uint SC_KEYBOARD_REQUEST = 0x08;
+		public const uint SC_INVALIDATE_RECT = 0x09;
+		public const uint SC_SET_CURSOR = 0x0A;
+#endif
 
 		[StructLayout(LayoutKind.Sequential)]
 		public struct SCITER_CALLBACK_NOTIFICATION
