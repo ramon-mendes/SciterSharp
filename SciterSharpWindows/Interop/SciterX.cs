@@ -25,9 +25,7 @@ namespace SciterSharp.Interop
 {
 	public static class SciterX
 	{
-#if SCITER_JS
-		const uint ISciterAPI_SIZE = 1512;
-#else
+#if SCITER_JS_NEW
 		const uint ISciterAPI_SIZE = 1512;
 #endif
 
@@ -53,7 +51,7 @@ namespace SciterSharp.Interop
 			get
 			{
 				var api = API;
-#if SCITER_JS
+#if SCITER_JS_NEW
 				uint major = api.SciterVersion(0);
 				uint majorB = api.SciterVersion(1);
 				uint minor = api.SciterVersion(2);
@@ -61,11 +59,6 @@ namespace SciterSharp.Interop
 				uint unknown = api.SciterVersion(4);
 
 				return string.Format("{0}.{1}.{2}.{3}.{4}", major, majorB, minor, minorB, unknown);
-#else
-				uint major = api.SciterVersion(1);
-				uint minor = api.SciterVersion(0);
-
-				return string.Format("{0}.{1}.{2}.{3}", (major >> 16) & 0xffff, major & 0xffff, (minor >> 16) & 0xffff, minor & 0xffff);
 #endif
 			}
 		}
@@ -135,7 +128,7 @@ namespace SciterSharp.Interop
 
 				_api = (ISciterAPI)Marshal.PtrToStructure(api_ptr, typeof(ISciterAPI));
 
-#if SCITER_JS
+#if SCITER_JS_NEW
 				Debug.Assert(_api.Value.version >= 10);
 #else
 				Debug.Assert(_api.Value.version <= 9);
@@ -413,21 +406,7 @@ namespace SciterSharp.Interop
 			public FPTR_SciterAtomValue SciterAtomValue;
 			public FPTR_SciterAtomNameCB SciterAtomNameCB;
 
-#if !SCITER_JS
-			// this was the last commit of Sciter.TIS ABI: https://github.com/c-smile/sciter-sdk/blob/f33df075d9eb2f8d252cb88f1b2c8096e56197ed/include/sciter-x-api.h
-			public FPTR_SciterSetGlobalAsset SciterSetGlobalAsset;
-			public FPTR_SciterGetElementAsset SciterGetElementAsset;
-
-			public FPTR_SciterSetVariable SciterSetVariable;
-			public FPTR_SciterGetVariable SciterGetVariable;
-
-			public FPTR_SciterElementUnwrap SciterElementUnwrap;
-			public FPTR_SciterElementWrap SciterElementWrap;
-			public FPTR_SciterNodeUnwrap SciterNodeUnwrap;
-			public FPTR_SciterNodeWrap SciterNodeWrap;
-
-			public FPTR_SciterReleaseGlobalAsset SciterReleaseGlobalAsset;
-#else
+#if SCITER_JS_NEW
 			public FPTR_SciterSetGlobalAsset SciterSetGlobalAsset;
 			public FPTR_SciterGetElementAsset SciterGetElementAsset;
 			public FPTR_SciterSetVariable SciterSetVariable;

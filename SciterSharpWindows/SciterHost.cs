@@ -384,7 +384,7 @@ namespace SciterSharp
 					OnGraphicsCriticalFailure(cgf.hwnd);
 					return 0;
 
-#if SCITER_JS
+#if SCITER_JS_NEW
 				case SciterXDef.SC_KEYBOARD_REQUEST:
 				case SciterXDef.SC_INVALIDATE_RECT:
 				case SciterXDef.SC_SET_CURSOR:

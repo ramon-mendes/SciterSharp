@@ -59,7 +59,7 @@ namespace SciterSharp.Interop
 		public const uint SC_ENGINE_DESTROYED = 0x05;
 		public const uint SC_POSTED_NOTIFICATION = 0x06;
 
-#if SCITER_JS
+#if SCITER_JS_NEW
 		public const uint SC_GRAPHICS_CRITICAL_FAILURE = 0x07;
 		public const uint SC_KEYBOARD_REQUEST = 0x08;
 		public const uint SC_INVALIDATE_RECT = 0x09;

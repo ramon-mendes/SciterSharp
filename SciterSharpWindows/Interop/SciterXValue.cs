@@ -64,7 +64,7 @@ namespace SciterSharp.Interop
 			T_DURATION = 17,	// double, seconds
 			T_ANGLE = 18,		// double, radians
 			T_COLOR = 19,       // [unsigned] INT, ABGR
-#if SCITER_JS
+#if SCITER_JS_NEW
 			T_ASSET = 21,       // sciter::om::iasset* add_ref'ed pointer
 #endif
 		}
