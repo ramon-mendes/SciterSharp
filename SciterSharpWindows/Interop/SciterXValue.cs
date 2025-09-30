@@ -63,7 +63,10 @@ namespace SciterSharp.Interop
 			//T_RANGE = 16,     // 16 - N..M, integer range.
 			T_DURATION = 17,	// double, seconds
 			T_ANGLE = 18,		// double, radians
-			T_COLOR = 19,		// [unsigned] INT, ABGR
+			T_COLOR = 19,       // [unsigned] INT, ABGR
+#if SCITER_JS
+			T_ASSET = 21,       // sciter::om::iasset* add_ref'ed pointer
+#endif
 		}
 
 		public enum VALUE_UNIT_TYPE : uint

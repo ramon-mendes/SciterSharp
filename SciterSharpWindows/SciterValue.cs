@@ -619,11 +619,11 @@ namespace SciterSharp
 			if(!IsFunction && !IsObjectFunction)
 				throw new Exception("Can't Call() this SciterValue because it is not a function");
 
-			SciterValue rv = new SciterValue();
 			SciterXValue.VALUE[] arr_VALUE = args.Select(sv => sv._data).ToArray();
 			if(self == null)
 				self = SciterValue.Undefined;
 
+			SciterValue rv = new();
 			_api.ValueInvoke(ref _data, ref self._data, (uint) args.Count, args.Count==0 ? null : arr_VALUE, out rv._data, null);
 			return rv;
 		}
