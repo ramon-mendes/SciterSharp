@@ -23,6 +23,8 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using SciterSharp.Interop;
+using System.ComponentModel;
+
 #if OSX
 using AppKit;
 using Foundation;
@@ -134,7 +136,7 @@ namespace SciterSharp
 #endif
 		}
 
-		public void CreateMainWindow(int width, int height, SciterXDef.SCITER_CREATE_WINDOW_FLAGS creationFlags = DefaultCreateFlags)
+		public void CreateToplevelMainWindow(int width, int height, SciterXDef.SCITER_CREATE_WINDOW_FLAGS creationFlags = DefaultCreateFlags)
 		{
 			PInvokeUtils.RECT frame = new PInvokeUtils.RECT();
 			frame.right = width;
@@ -142,7 +144,7 @@ namespace SciterSharp
 			CreateWindow(frame, creationFlags);
 		}
 
-		public void CreateOwnedWindow(IntPtr owner, int width, int height, SciterXDef.SCITER_CREATE_WINDOW_FLAGS creationFlags = DefaultCreateFlags)
+		public void CreateToplevelOwnedWindow(IntPtr owner, int width, int height, SciterXDef.SCITER_CREATE_WINDOW_FLAGS creationFlags = DefaultCreateFlags)
 		{
 			PInvokeUtils.RECT frame = new PInvokeUtils.RECT();
 			frame.right = width;
@@ -175,7 +177,7 @@ namespace SciterSharp
 			PInvokeUtils.RECT frame;
 			PInvokeWindows.GetClientRect(hwnd_parent, out frame);
 
-#if true
+#if false
 			string wndclass = Marshal.PtrToStringUni(_api.SciterClassName());
 			_hwnd = PInvokeWindows.CreateWindowEx(0, wndclass, null, PInvokeWindows.WS_CHILD, 0, 0, frame.right, frame.bottom, hwnd_parent, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 			//SetSciterOption(SciterXDef.SCITER_RT_OPTIONS.SCITER_SET_DEBUG_MODE, new IntPtr(1));// NO, user should opt for it
@@ -184,7 +186,12 @@ namespace SciterSharp
 #endif
 
 			if(_hwnd == IntPtr.Zero)
-				throw new Exception("CreateChildWindow() failed");
+			{
+				int error = Marshal.GetLastWin32Error();
+				string message = new Win32Exception(error).Message;
+
+				throw new Exception("CreateChildWindow() failed: " + message);
+			}
 		}
 #endif
 

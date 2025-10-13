@@ -24,12 +24,6 @@ namespace TestCore
 			});
 			return true;
 		}
-
-		public bool Host_DoSomething(SciterElement el, SciterValue[] args, out SciterValue result)
-		{
-			result = null;
-			return true;
-		}
 	}
 
 

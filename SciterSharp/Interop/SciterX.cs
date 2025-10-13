@@ -435,7 +435,7 @@ namespace SciterSharp.Interop
 
 			// LPCWSTR	function() SciterClassName;
 			public delegate IntPtr FPTR_SciterClassName();// use Marshal.PtrToStringUni(returned IntPtr) to get the actual string
-														  // UINT	function(BOOL major) SciterVersion;
+			// UINT	function(BOOL major) SciterVersion;
 			public delegate uint FPTR_SciterVersion(int major);
 			// BOOL	function(HWINDOW hwnd, LPCWSTR uri, LPCBYTE data, UINT dataLength) SciterDataReady;
 			public delegate bool FPTR_SciterDataReady(IntPtr hwnd, [MarshalAs(UnmanagedType.LPWStr)] string uri, byte[] data, uint dataLength);

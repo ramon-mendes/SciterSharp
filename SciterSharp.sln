@@ -12,10 +12,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solutio
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2ABBA2EF-6FEE-4F81-BF64-A1AB02BEE2C5}"
+	ProjectSection(SolutionItems) = preProject
+		TESTS.md = TESTS.md
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SciterSharp", "SciterSharp", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SciterSharpWindows", "SciterSharp\SciterSharpWindows.csproj", "{764F59DA-6288-CD15-2791-6F43F396A43D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCore", "Tests\TestCoreApp\TestCore.csproj", "{252D97AE-2781-6C3C-5EB2-540953E56397}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGraphics", "Tests\TestGraphics\TestGraphics.csproj", "{914AE8A6-097E-A8A0-8919-9C25897BD8F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestWinForms", "Tests\TestWinForms\TestWinForms.csproj", "{21C3F46A-4821-0B15-1A4A-DD63B7CAD5B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,12 +36,27 @@ Global
 		{764F59DA-6288-CD15-2791-6F43F396A43D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{764F59DA-6288-CD15-2791-6F43F396A43D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{764F59DA-6288-CD15-2791-6F43F396A43D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{252D97AE-2781-6C3C-5EB2-540953E56397}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{252D97AE-2781-6C3C-5EB2-540953E56397}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{252D97AE-2781-6C3C-5EB2-540953E56397}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{252D97AE-2781-6C3C-5EB2-540953E56397}.Release|Any CPU.Build.0 = Release|Any CPU
+		{914AE8A6-097E-A8A0-8919-9C25897BD8F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{914AE8A6-097E-A8A0-8919-9C25897BD8F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{914AE8A6-097E-A8A0-8919-9C25897BD8F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{914AE8A6-097E-A8A0-8919-9C25897BD8F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21C3F46A-4821-0B15-1A4A-DD63B7CAD5B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21C3F46A-4821-0B15-1A4A-DD63B7CAD5B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21C3F46A-4821-0B15-1A4A-DD63B7CAD5B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21C3F46A-4821-0B15-1A4A-DD63B7CAD5B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{764F59DA-6288-CD15-2791-6F43F396A43D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{252D97AE-2781-6C3C-5EB2-540953E56397} = {2ABBA2EF-6FEE-4F81-BF64-A1AB02BEE2C5}
+		{914AE8A6-097E-A8A0-8919-9C25897BD8F0} = {2ABBA2EF-6FEE-4F81-BF64-A1AB02BEE2C5}
+		{21C3F46A-4821-0B15-1A4A-DD63B7CAD5B6} = {2ABBA2EF-6FEE-4F81-BF64-A1AB02BEE2C5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ACCCA607-3FFA-4A98-AB4B-302FEDF13D01}

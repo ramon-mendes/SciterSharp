@@ -83,9 +83,9 @@
     <None Include="res\glyphs.html" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SciterSharp\SciterSharpWindowsCore.csproj">
-      <Project>{9110e187-619c-4c10-91ee-7457127d354d}</Project>
-      <Name>SciterSharpWindowsCore</Name>
+    <ProjectReference Include="..\..\SciterSharp\SciterSharpWindows.csproj">
+      <Project>{764f59da-6288-cd15-2791-6f43f396a43d}</Project>
+      <Name>SciterSharpWindows</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

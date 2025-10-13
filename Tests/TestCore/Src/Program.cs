@@ -1,5 +1,3 @@
-using SciterSharp;
-using SciterSharp.Interop;
 using System;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
@@ -9,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Reflection;
+using SciterSharp;
+using SciterSharp.Interop;
 
 namespace TestCore
 {

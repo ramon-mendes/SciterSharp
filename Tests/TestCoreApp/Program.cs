@@ -23,34 +23,29 @@ namespace TestCore
 			}
 		}
 
-		public static SciterWindow AppWnd;
+		public static WindowApp AppWnd;
 		public static Host AppHost;
-		private static SciterMessages sm = new SciterMessages();
+		private static SciterMessages sm = new();
 
 		[STAThread]
 		static void Main(string[] args)
 		{
+			// Sciter needs this for drag'n'drop support; STAThread is required for OleInitialize succeess
+			int oleres = PInvokeWindows.OleInitialize(IntPtr.Zero);
+			Debug.Assert(oleres == 0);
+
 			var list = new List<int> { 123 };
 			var ss = SciterValue.FromObject(new { aa = list });
 
 			Debug.WriteLine("Sciter: " + SciterX.Version);
 			Debug.WriteLine("Bitness: " + IntPtr.Size);
-
-			// Sciter needs this for drag'n'drop support; STAThread is required for OleInitialize succeess
-			int oleres = PInvokeWindows.OleInitialize(IntPtr.Zero);
-			Debug.Assert(oleres == 0);
 			
 			// Create the window
-			AppWnd = new SciterWindow();
-
-			var rc = new PInvokeUtils.RECT();
-			rc.right = 800;
-			rc.bottom = 600;
+			AppWnd = new();
 
 			var wnd = AppWnd;
-			wnd.CreateMainWindow(1500, 800);
-			wnd.CenterTopLevelWindow();
-			wnd.Title = "TestCore";
+			wnd.CreateToplevelMainWindow(1500, 800);
+			//wnd.CenterTopLevelWindow();
 			
 			// Prepares SciterHost and then load the page
 			AppHost = new Host();
@@ -61,12 +56,13 @@ namespace TestCore
 			host.CallFunction("Wow");
 			//host.DebugInspect();
 
-			//byte[] css_bytes = File.ReadAllBytes(@"D:\ProjetosSciter\AssetsDrop\AssetsDrop\res\css\global.css");
-			//SciterX.API.SciterAppendMasterCSS(css_bytes, (uint) css_bytes.Length);
 			Debug.Assert(!host.EvalScript("Utils").IsUndefined);
 
 			// Show window and Run message loop
 			wnd.Show();
+			var r = wnd.Size;
+			wnd.Title = "TestCore";// only works after I show the window
+
 			PInvokeUtils.RunMsgLoop();
 		}
 	}

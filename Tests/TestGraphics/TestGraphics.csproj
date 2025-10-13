@@ -2,13 +2,13 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
     <ApplicationIcon />
     <StartupObject />
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\SciterSharpWindows\SciterSharpWindowsCore.csproj" />
+    <ProjectReference Include="..\..\SciterSharp\SciterSharpWindows.csproj" />
   </ItemGroup>
 
   <ItemGroup>
