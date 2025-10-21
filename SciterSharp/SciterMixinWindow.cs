@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using SciterSharp;
 using SciterSharp.Interop;
+using Windows.Win32;
 
-namespace SciterSharpWindows
+namespace SciterSharp
 {
 	public class SciterMixinWindow : SciterWindow
 	{
@@ -23,6 +24,10 @@ namespace SciterSharpWindows
 		private void RegisterClass()
 		{
 			string className = "scitersharp-frame";
+			PInvoke.RegisterClassEx(new Windows.Win32.UI.WindowsAndMessaging.WNDCLASSEXW()
+			{
+				
+			});
 		}
 	}
 }
