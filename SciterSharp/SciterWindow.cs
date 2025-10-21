@@ -20,10 +20,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using SciterSharp.Interop;
-using System.ComponentModel;
 
 #if OSX
 using AppKit;
@@ -136,25 +136,18 @@ namespace SciterSharp
 #endif
 		}
 
-		public void CreateToplevelMainWindow(int width, int height, SciterXDef.SCITER_CREATE_WINDOW_FLAGS creationFlags = DefaultCreateFlags)
+		public void CreateToplevelWindow(int width, int height, SciterXDef.SCITER_CREATE_WINDOW_FLAGS creationFlags = DefaultCreateFlags, IntPtr owner = default)
 		{
 			PInvokeUtils.RECT frame = new PInvokeUtils.RECT();
 			frame.right = width;
 			frame.bottom = height;
-			CreateWindow(frame, creationFlags);
-		}
 
-		public void CreateToplevelOwnedWindow(IntPtr owner, int width, int height, SciterXDef.SCITER_CREATE_WINDOW_FLAGS creationFlags = DefaultCreateFlags)
-		{
-			PInvokeUtils.RECT frame = new PInvokeUtils.RECT();
-			frame.right = width;
-			frame.bottom = height;
 			CreateWindow(frame, creationFlags, owner);
 		}
 
 		/*
 		/// <summary>
-		/// Create an owned top-level Sciter window
+		/// 
 		/// </summary>
 		/// <param name="width"></param>
 		/// <param name="height"></param>

@@ -780,6 +780,7 @@ namespace SciterSharp.Interop
 			// BOOL function( const VALUE* pval) ValueIsNativeFunctor;
 			public delegate SciterXValue.VALUE_RESULT FPTR_ValueIsNativeFunctor(ref SciterXValue.VALUE pval);
 
+#if FALSE
 			// tiscript VM API
 			// tiscript_native_interface* function() TIScriptAPI;
 			public delegate IntPtr FPTR_TIScriptAPI();
@@ -790,6 +791,7 @@ namespace SciterSharp.Interop
 			public delegate bool FPTR_Sciter_v2V(IntPtr vm, TIScript.tiscript_value script_value, ref SciterXValue.VALUE value, bool isolate);
 			// BOOL function(HVM vm, const VALUE* valuev, tiscript_value* script_value) Sciter_V2v;
 			public delegate bool FPTR_Sciter_V2v(IntPtr vm, ref SciterXValue.VALUE value, ref TIScript.tiscript_value script_value);
+#endif
 
 			// HSARCHIVE function(LPCBYTE archiveData, UINT archiveDataLength) SciterOpenArchive;
 			public delegate IntPtr FPTR_SciterOpenArchive(IntPtr archiveData, uint archiveDataLength);// archiveData must point to a pinned byte[] array!

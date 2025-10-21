@@ -1,4 +1,5 @@
-﻿// Copyright 2025 Ramon F. Mendes
+﻿#if FALSE
+// Copyright 2025 Ramon F. Mendes
 //
 // This file is part of SciterSharp.
 // 
@@ -194,3 +195,4 @@ namespace SciterSharp.Interop
 		}
 	}
 }
+#endif
