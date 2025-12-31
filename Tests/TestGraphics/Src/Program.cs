@@ -23,9 +23,9 @@ namespace TestGraphics
 			Console.WriteLine("Sciter: " + SciterX.Version);
 
 			// Create the window
-			var wnd = new SciterWindow();
-			wnd.CreateMainWindow(1500, 800);
-			wnd.CenterTopLevelWindow();
+			var wnd = new SciterMixinWindow();
+			wnd.CreateTopLevelWindow(new PInvokeUtils.RECT(800, 600));
+            wnd.CenterTopLevelWindow();
 			wnd.Title = "Sciter Bootstrap";
 
 			// Prepares SciterHost and then load the page

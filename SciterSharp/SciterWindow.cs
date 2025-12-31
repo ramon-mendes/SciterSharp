@@ -180,10 +180,11 @@ namespace SciterSharp
 		}
 #endif
 
-		/// <summary>
-		/// Centers the window in the screen. You must call it after the window is created, but before it is shown to avoid flickering
-		/// </summary>
-		public void CenterTopLevelWindow()
+        /// <summary>
+        /// Centers the window in the screen.
+        /// Call it after the window is created, but before it is shown to avoid flickering
+        /// </summary>
+        public void CenterTopLevelWindow()
 		{
 #if WINDOWS
 			PInvokeUtils.RECT rectWindow;

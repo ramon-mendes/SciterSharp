@@ -44,8 +44,8 @@ namespace TestCore
 			AppWnd = new();
 
 			var wnd = AppWnd;
-			wnd.CreateToplevelMainWindow(1500, 800);
-			//wnd.CenterTopLevelWindow();
+			wnd.CreateTopLevelWindow(new PInvokeUtils.RECT(1500, 800));
+			wnd.CenterTopLevelWindow();
 			
 			// Prepares SciterHost and then load the page
 			AppHost = new Host();

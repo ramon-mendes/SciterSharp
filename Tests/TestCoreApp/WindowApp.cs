@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SciterSharp;
+using SciterSharp.Interop;
 
 namespace TestCore
 {
@@ -12,9 +13,9 @@ namespace TestCore
 		public static void Create()
 		{
 			var wnd = new WindowApp();
-			wnd.CreateToplevelWindow(800, 600);
+			wnd.CreateTopLevelWindow(new PInvokeUtils.RECT(800, 600));
 
-			var host = new Host();
+            var host = new Host();
 			host.Setup(wnd);
 			host.AttachEvh(new HostEvh());
 			host.SetupPage("index.html");

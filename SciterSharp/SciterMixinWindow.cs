@@ -9,16 +9,19 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Win32;
 using Windows.Win32.Foundation;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace SciterSharp
 {
 	public class SciterMixinWindow : SciterWindow
 	{
-        public void CreateToplevelWindow(PInvokeUtils.RECT frame, IntPtr owner)
+        public void CreateTopLevelWindow(PInvokeUtils.RECT frame, IntPtr owner = default)
         {
-			if (owner == IntPtr.Zero)
-                throw new ArgumentException("Invalid owner window handle");
-
+			if (owner != default)
+			{
+                if (PInvoke.IsWindow((HWND)owner) == false)
+                    throw new ArgumentException("Invalid owner window handle");
+            }
 			SciterXDef.SCITER_CREATE_WINDOW_FLAGS creationFlags = DefaultCreateFlags;
             CreateWindow(frame, creationFlags, owner);
         }
@@ -26,7 +29,7 @@ namespace SciterSharp
 #if WINDOWS
         public void CreateChildWindow(PInvokeUtils.RECT frame, IntPtr parent)
         {
-            if (parent == IntPtr.Zero)
+            if (parent == default)
                 throw new ArgumentException("Invalid parent window handle");
 
             if (PInvoke.IsWindow((HWND)parent) == false)
