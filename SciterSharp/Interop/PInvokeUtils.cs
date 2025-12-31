@@ -86,15 +86,6 @@ namespace SciterSharp.Interop
 			public int Width { get { return right - left; } }
 			public int Height { get { return bottom - top; } }
 
-			public Windows.Win32.Foundation.RECT ToWin32Rect()
-			{
-				Windows.Win32.Foundation.RECT r;
-				r.left = left;
-				r.top = top;
-				r.right = right;
-				r.bottom = bottom;
-				return r;
-            }
         }
 
 		[StructLayout(LayoutKind.Sequential)]

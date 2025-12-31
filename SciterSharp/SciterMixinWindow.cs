@@ -15,14 +15,14 @@ namespace SciterSharp
 {
 	public class SciterMixinWindow : SciterWindow
 	{
-        public void CreateTopLevelWindow(PInvokeUtils.RECT frame, IntPtr owner = default)
+        public void CreateTopLevelWindow(PInvokeUtils.RECT frame, SciterXDef.SCITER_CREATE_WINDOW_FLAGS creationFlags = DefaultCreateFlags, IntPtr owner = default)
         {
 			if (owner != default)
 			{
                 if (PInvoke.IsWindow((HWND)owner) == false)
                     throw new ArgumentException("Invalid owner window handle");
             }
-			SciterXDef.SCITER_CREATE_WINDOW_FLAGS creationFlags = DefaultCreateFlags;
+
             CreateWindow(frame, creationFlags, owner);
         }
 
