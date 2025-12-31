@@ -7,12 +7,12 @@ using SciterSharp;
 
 namespace TestCore
 {
-	class WindowApp : SciterWindow
+	class WindowApp : SciterMixinWindow
 	{
 		public static void Create()
 		{
 			var wnd = new WindowApp();
-			wnd.CreateToplevelMainWindow(800, 600);
+			wnd.CreateToplevelWindow(800, 600);
 
 			var host = new Host();
 			host.Setup(wnd);

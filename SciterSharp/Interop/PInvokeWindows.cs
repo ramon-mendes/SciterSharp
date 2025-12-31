@@ -219,17 +219,6 @@ namespace SciterSharp.Interop
 		private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 		#endregion
 
-
-		#region CreateChildWindow workaround
-		[DllImport("user32.dll", SetLastError=true)]
-		public static extern IntPtr CreateWindowEx(int dwExStyle, string lpClassName, string lpWindowName, int dwStyle, int x, int y, int nWidth, int nHeight, IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance, IntPtr lpParam);
-
-		[DllImport("user32.dll")]
-		public static extern bool GetClientRect(IntPtr hWnd, out PInvokeUtils.RECT lpRect);
-
-		public const int WS_CHILD = 0x40000000;
-		#endregion
-
 		#region MessageBox
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		public static extern MessageBoxResult MessageBox(IntPtr hWnd, String text, String caption, MessageBoxOptions options);

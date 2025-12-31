@@ -21,6 +21,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using Windows.Win32.Foundation;
 
 namespace SciterSharp.Interop
 {
@@ -70,11 +71,31 @@ namespace SciterSharp.Interop
 		[StructLayout(LayoutKind.Sequential)]
 		public struct RECT
 		{
-			public int left, top, right, bottom;
+			public RECT() { }
+
+			public RECT(int width, int height)
+            {
+				left = 0;
+				top = 0;
+				right = width;
+				bottom = height;
+            }
+
+            public int left, top, right, bottom;
 
 			public int Width { get { return right - left; } }
 			public int Height { get { return bottom - top; } }
-		}
+
+			public Windows.Win32.Foundation.RECT ToWin32Rect()
+			{
+				Windows.Win32.Foundation.RECT r;
+				r.left = left;
+				r.top = top;
+				r.right = right;
+				r.bottom = bottom;
+				return r;
+            }
+        }
 
 		[StructLayout(LayoutKind.Sequential)]
 		public struct POINT
