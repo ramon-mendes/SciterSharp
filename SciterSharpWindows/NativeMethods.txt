@@ -1,0 +1,5 @@
+RegisterClassEx
+GetClientRect
+WINDOW_STYLE
+CreateWindowEx
+IsWindow

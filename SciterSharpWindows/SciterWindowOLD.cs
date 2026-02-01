@@ -15,16 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with SciterSharp.  If not, see <http://www.gnu.org/licenses/>.
 
+/*
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using SciterSharp.Interop;
-
 #if OSX
 using AppKit;
 using Foundation;
@@ -113,10 +112,9 @@ namespace SciterSharp
 		/// </summary>
 		/// <param name="frame">Rectangle of the window</param>
 		/// <param name="creationFlags">Flags for the window creation, defaults to SW_MAIN | SW_TITLEBAR | SW_RESIZEABLE | SW_CONTROLS | SW_ENABLE_DEBUG</param>
-		public void CreateWindow(PInvokeUtils.RECT frame = default, SciterXDef.SCITER_CREATE_WINDOW_FLAGS creationFlags = DefaultCreateFlags, IntPtr parent = default)
+		public void CreateWindow(PInvokeUtils.RECT frame = new PInvokeUtils.RECT(), SciterXDef.SCITER_CREATE_WINDOW_FLAGS creationFlags = DefaultCreateFlags, IntPtr parent = new IntPtr())
 		{
 			Debug.Assert(_hwnd == IntPtr.Zero);
-
 			_hwnd = _api.SciterCreateWindow(
 				creationFlags,
 				ref frame,
@@ -124,15 +122,10 @@ namespace SciterSharp
 				IntPtr.Zero,
 				parent
 			);
+			Debug.Assert(_hwnd != IntPtr.Zero);
 
-            if (_hwnd == IntPtr.Zero)
-            {
-                int error = Marshal.GetLastWin32Error();
-                string message = new Win32Exception(error).Message;
-                Debug.Assert(false);
-
-                throw new Exception("CreateWindow() failed: " + message);
-            }
+			if(_hwnd == IntPtr.Zero)
+				throw new Exception("CreateWindow() failed");
 
 #if GTKMONO
 			_gtkwindow = PInvokeGTK.gtk_widget_get_toplevel(_hwnd);
@@ -142,6 +135,58 @@ namespace SciterSharp
 #endif
 		}
 
+		public void CreateMainWindow(int width, int height, SciterXDef.SCITER_CREATE_WINDOW_FLAGS creationFlags = DefaultCreateFlags)
+		{
+			PInvokeUtils.RECT frame = new PInvokeUtils.RECT();
+			frame.right = width;
+			frame.bottom = height;
+			CreateWindow(frame, creationFlags);
+		}
+
+		public void CreateOwnedWindow(IntPtr owner, int width, int height, SciterXDef.SCITER_CREATE_WINDOW_FLAGS creationFlags = DefaultCreateFlags)
+		{
+			PInvokeUtils.RECT frame = new PInvokeUtils.RECT();
+			frame.right = width;
+			frame.bottom = height;
+			CreateWindow(frame, creationFlags, owner);
+		}
+
+		/// <summary>
+		/// Create an owned top-level Sciter window
+		/// </summary>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="owner_hwnd"></param>
+		//public void CreatePopupAlphaWindow(int width, int height, IntPtr owner_hwnd)
+		//{
+		//	PInvokeUtils.RECT frame = new PInvokeUtils.RECT();
+		//	frame.right = width;
+		//	frame.bottom = height;
+		//	CreateWindow(frame, SciterXDef.SCITER_CREATE_WINDOW_FLAGS.SW_ALPHA | SciterXDef.SCITER_CREATE_WINDOW_FLAGS.SW_TOOL, owner_hwnd);
+		//	// Sciter BUG: window comes with WM_EX_APPWINDOW style
+		//}
+
+#if WINDOWS
+		public void CreateChildWindow(IntPtr hwnd_parent, SciterXDef.SCITER_CREATE_WINDOW_FLAGS flags = SciterXDef.SCITER_CREATE_WINDOW_FLAGS.SW_CHILD)
+		{
+			if(PInvokeWindows.IsWindow(hwnd_parent) == false)
+				throw new ArgumentException("Invalid parent window");
+
+			PInvokeUtils.RECT frame;
+			PInvokeWindows.GetClientRect(hwnd_parent, out frame);
+
+#if true
+			string wndclass = Marshal.PtrToStringUni(_api.SciterClassName());
+			_hwnd = PInvokeWindows.CreateWindowEx(0, wndclass, null, PInvokeWindows.WS_CHILD, 0, 0, frame.right, frame.bottom, hwnd_parent, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+			//SetSciterOption(SciterXDef.SCITER_RT_OPTIONS.SCITER_SET_DEBUG_MODE, new IntPtr(1));// NO, user should opt for it
+#else
+			_hwnd = _api.SciterCreateWindow(flags, ref frame, _proc, IntPtr.Zero, hwnd_parent);
+#endif
+
+			if(_hwnd == IntPtr.Zero)
+				throw new Exception("CreateChildWindow() failed");
+		}
+#endif
 
 		public void Destroy()
 		{
@@ -180,11 +225,10 @@ namespace SciterSharp
 		}
 #endif
 
-        /// <summary>
-        /// Centers the window in the screen.
-        /// Call it after the window is created, but before it is shown to avoid flickering
-        /// </summary>
-        public void CenterTopLevelWindow()
+		/// <summary>
+		/// Centers the window in the screen. You must call it after the window is created, but before it is shown to avoid flickering
+		/// </summary>
+		public void CenterTopLevelWindow()
 		{
 #if WINDOWS
 			PInvokeUtils.RECT rectWindow;
@@ -374,10 +418,10 @@ namespace SciterSharp
 			}
 		}
 
-		/*public IntPtr VM
-		{
-			get { return _api.SciterGetVM(_hwnd); }
-		}*/
+		//public IntPtr VM
+		//{
+		//	get { return _api.SciterGetVM(_hwnd); }
+		//}
 
 #if WINDOWS
 		public Icon Icon
@@ -562,3 +606,4 @@ namespace SciterSharp
 #endif
 	}
 }
+*/

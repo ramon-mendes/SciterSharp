@@ -70,6 +70,7 @@
     <Compile Include="SciterEventHandler.cs" />
     <Compile Include="SciterGraphics.cs" />
     <Compile Include="SciterHost.cs" />
+    <Compile Include="SciterMixinWindow.cs" />
     <Compile Include="SciterRequest.cs" />
     <Compile Include="SciterValue.cs" />
     <Compile Include="SciterWindow.cs" />

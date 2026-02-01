@@ -1,0 +1,5 @@
+{
+  "$schema": "https://aka.ms/CsWin32.schema.json",
+  "emitSingleFile": false,
+  "public": false /*I can't expose them because consuming project may also be using CsWin32 and it will cause conflits*/
+}
