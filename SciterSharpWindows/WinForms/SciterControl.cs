@@ -12,22 +12,27 @@ using SciterSharp.Interop;
 
 namespace SciterSharp.WinForms
 {
-	/// <summary>
-	/// Represents a SciterWindow control.
-	/// </summary>
 	public class SciterControl : Control
 	{
-		public SciterWindow SciterWnd { get; private set; }
+		public SciterMixinWindow SciterWnd { get; private set; }
 
 		public SciterControl()
 		{
-			SciterWnd = new SciterWindow();
+			SciterWnd = new SciterMixinWindow();
 		}
-		
+
 		#region Overrided Methods
 		protected override void OnHandleCreated(EventArgs e)
 		{
-			SciterWnd.CreateChildWindow(Handle);
+			var rect = new PInvokeUtils.RECT()
+			{
+				left = ClientRectangle.Left,
+				bottom = ClientRectangle.Bottom,
+				right = ClientRectangle.Right,
+				top = ClientRectangle.Top,
+			};
+
+			SciterWnd.CreateChildWindow(rect, Handle);
 			SciterWnd.LoadHtml(
 				"<body>" +
 					"<code>Add an event handler to the <b>HandleCreated</b> event for any needed initialization (e.g.: load the HTML)</code><br /><br />" +
@@ -40,7 +45,7 @@ namespace SciterSharp.WinForms
 
 		protected override void OnClientSizeChanged(EventArgs e)
 		{
-			if(SciterWnd._hwnd.ToInt32()!=0)
+			if(SciterWnd._hwnd.ToInt32() != 0)
 			{
 				var sz = this.Size;
 				PInvokeWindows.MoveWindow(SciterWnd._hwnd, 0, 0, sz.Width, sz.Height, true);
