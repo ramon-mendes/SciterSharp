@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0-windows7.0</TargetFramework>
@@ -7,6 +7,8 @@
     <DelaySign>false</DelaySign>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <UseWindowsForms>true</UseWindowsForms>
+    
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -18,21 +20,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="sciter.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="sciter.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <None Include="runtimes\linux-arm64\native\libsciter.so" Pack="true" PackagePath="runtimes/linux-arm64/native/"></None>
+    <None Include="runtimes\linux-x64\native\libsciter.so" Pack="true" PackagePath="runtimes/linux-x64/native/"></None>
+    <None Include="runtimes\win-x64\native\sciter.dll" Pack="true" PackagePath="runtimes/win-x64/native/"></None>
+    <None Include="runtimes\win-x86\native\sciter.dll" Pack="true" PackagePath="runtimes/win-x86/native/"></None>
   </ItemGroup>
 
   <ItemGroup>

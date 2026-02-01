@@ -1,5 +1,5 @@
 RegisterClassEx
 GetClientRect
-WS_CHILD
+WINDOW_STYLE
 CreateWindowEx
 IsWindow
