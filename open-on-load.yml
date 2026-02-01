@@ -1,0 +1,8 @@
+#
+enabled: true
+
+#
+url: https://github.com/users/ramon-mendes/projects/17
+
+# comentei a lógica disso, pois acho q falta verificar se estou reabrindo a msm solution
+openOncePerSession: true

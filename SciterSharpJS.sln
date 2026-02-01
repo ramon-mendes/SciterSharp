@@ -1,12 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11415.280 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solution Items", "{79D83D95-E87F-48DC-A653-1998BA9602E2}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		OmniCode-Settings.json = OmniCode-Settings.json
+		open-on-load.yml = open-on-load.yml
 		README.md = README.md
 		SciterSharp\SciterSharpOSX.nuspec = SciterSharp\SciterSharpOSX.nuspec
 	EndProjectSection
