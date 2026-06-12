@@ -6,7 +6,7 @@ This library provides bindings of Sciter C/C++ headers to the C# language.
 
 The source is made portable to work in Windows, Linux/GTK+3/Mono and OSX/Mono.
 
-License: **MIT**
+License: **GPL v3**
 
 ## Comercial SUPPORT:
 

@@ -9,7 +9,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Win32;
 using Windows.Win32.Foundation;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace SciterSharp
 {
