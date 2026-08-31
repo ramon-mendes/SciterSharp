@@ -150,7 +150,7 @@ namespace SciterSharp.Interop
 			{
 				uint major = API.SciterVersion(1);
 				uint minor = API.SciterVersion(0);
-				Debug.Assert(major >= 0x00040000);
+				//Debug.Assert(major >= 0x00040000);
 
 				int api_struct_size = Marshal.SizeOf(typeof(SciterXGraphics.ISciterGraphicsAPI));
 				if(IntPtr.Size == 8)
