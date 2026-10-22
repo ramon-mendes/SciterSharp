@@ -2,7 +2,11 @@
 #
 # Release flow: bump LibVersion.AssemblyVersion in SciterSharp/LibVersion.cs and push to master.
 # The package version comes from that constant. If that version is already on nuget.org nothing is published.
-# Requires the repository secret NUGET_API_KEY (nuget.org API key with push rights for SciterSharpJS).
+#
+# Auth: nuget.org Trusted Publishing (OIDC), no long-lived API key is stored.
+# Setup: nuget.org > username > Trusted Publishing policy with Repository Owner "ramon-mendes",
+# Repository "SciterSharp", Workflow File "nuget.yml"; and the repository secret NUGET_USER
+# with the nuget.org profile name (not the email).
 
 name: Publish NuGet
 
@@ -15,6 +19,7 @@ on:
 
 permissions:
   contents: write # create the vX.Y.Z tag and GitHub release
+  id-token: write # GitHub OIDC token for nuget.org Trusted Publishing
 
 jobs:
   publish:
@@ -55,10 +60,18 @@ jobs:
           name: nupkg
           path: out/*.nupkg
 
+      # short-lived (1h) API key, requested right before the push
+      - name: NuGet login (OIDC -> temporary API key)
+        if: steps.version.outputs.exists == 'false'
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
       - name: Push to nuget.org
         if: steps.version.outputs.exists == 'false'
         shell: pwsh
-        run: dotnet nuget push "out/$env:PACKAGE_ID.${{ steps.version.outputs.version }}.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+        run: dotnet nuget push "out/$env:PACKAGE_ID.${{ steps.version.outputs.version }}.nupkg" --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
 
       - name: Tag and GitHub release
         if: steps.version.outputs.exists == 'false'
