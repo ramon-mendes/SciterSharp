@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using SciterSharp.Interop;
 
 #if OSX
@@ -45,16 +46,16 @@ namespace SciterSharp
 #endif
 
 	public class SciterWindow
-#if WINDOWS && !CORE
+#if WINDOWS // net8.0-windows: WinForms interop
 		: System.Windows.Forms.IWin32Window
 #endif
 	{
 		protected static SciterX.ISciterAPI _api = SciterX.API;
 		public IntPtr _hwnd { get; protected set; }
 		private SciterXDef.FPTR_SciterWindowDelegate _proc;
-#if GTKMONO
+		/// <summary>Linux only: the GtkWindow that contains the Sciter widget (_hwnd)</summary>
 		public IntPtr _gtkwindow { get; private set; }
-#elif OSX
+#if OSX
 		public NSView _nsview { get; private set; }
 #endif
 
@@ -77,26 +78,24 @@ namespace SciterSharp
 								SciterXDef.SCRIPT_RUNTIME_FEATURES.ALLOW_SYSINFO;
 			_api.SciterSetOption(IntPtr.Zero, SciterXDef.SCITER_RT_OPTIONS.SCITER_SET_SCRIPT_RUNTIME_FEATURES, new IntPtr((int)allow));
 
-#if WINDOWS
-			_proc = InternalProcessSciterWindowMessage;
-#else
-			_proc = null;
-#endif
+			_proc = OperatingSystem.IsWindows() ? InternalProcessSciterWindowMessage : null;
 		}
 
 		public SciterWindow(IntPtr hwnd)
 		{
-#if WINDOWS
-			_proc = InternalProcessSciterWindowMessage;
-#else
-			_proc = null;
-#endif
+			_proc = OperatingSystem.IsWindows() ? InternalProcessSciterWindowMessage : null;
 			_hwnd = hwnd;
+			AfterHandleSet();
+		}
 
-#if GTKMONO
-			_gtkwindow = PInvokeGTK.gtk_widget_get_toplevel(_hwnd);
-			Debug.Assert(_gtkwindow != IntPtr.Zero);
-#elif OSX
+		private void AfterHandleSet()
+		{
+			if(OperatingSystem.IsLinux())
+			{
+				_gtkwindow = PInvokeGTK.gtk_widget_get_toplevel(_hwnd);
+				Debug.Assert(_gtkwindow != IntPtr.Zero);
+			}
+#if OSX
 			_nsview = new OSXView(_hwnd);
 #endif
 		}
@@ -134,25 +133,19 @@ namespace SciterSharp
                 throw new Exception("CreateWindow() failed: " + message);
             }
 
-#if GTKMONO
-			_gtkwindow = PInvokeGTK.gtk_widget_get_toplevel(_hwnd);
-			Debug.Assert(_gtkwindow != IntPtr.Zero);
-#elif OSX
-			_nsview = new OSXView(_hwnd);
-#endif
+			AfterHandleSet();
 		}
 
 
 		public void Destroy()
 		{
-#if WINDOWS
-			PInvokeWindows.DestroyWindow(_hwnd);
-#elif GTKMONO
-			PInvokeGTK.gtk_widget_destroy(_gtkwindow);
-#endif
+			if(OperatingSystem.IsWindows())
+				PInvokeWindows.DestroyWindow(_hwnd);
+			else if(OperatingSystem.IsLinux())
+				PInvokeGTK.gtk_widget_destroy(_gtkwindow);
 		}
 
-#if WINDOWS
+		[SupportedOSPlatform("windows")]
 		public bool ModifyStyle(PInvokeWindows.SetWindowLongFlags dwRemove, PInvokeWindows.SetWindowLongFlags dwAdd)
 		{
 			int GWL_EXSTYLE = -20;
@@ -166,6 +159,7 @@ namespace SciterSharp
 			return true;
 		}
 
+		[SupportedOSPlatform("windows")]
 		public bool ModifyStyleEx(PInvokeWindows.SetWindowLongFlags dwRemove, PInvokeWindows.SetWindowLongFlags dwAdd)
 		{
 			int GWL_STYLE = -16;
@@ -178,7 +172,6 @@ namespace SciterSharp
 			PInvokeWindows.SetWindowLongPtr(_hwnd, GWL_STYLE, (IntPtr)dwNewStyle);
 			return true;
 		}
-#endif
 
         /// <summary>
         /// Centers the window in the screen.
@@ -186,30 +179,35 @@ namespace SciterSharp
         /// </summary>
         public void CenterTopLevelWindow()
 		{
-#if WINDOWS
-			PInvokeUtils.RECT rectWindow;
-			PInvokeWindows.GetWindowRect(_hwnd, out rectWindow);
-
-			PInvokeUtils.RECT rectWorkArea = new PInvokeUtils.RECT();
-			PInvokeWindows.SystemParametersInfo(PInvokeWindows.SPI_GETWORKAREA, 0, ref rectWorkArea, 0);
-			
-			int nX = (rectWorkArea.Width - rectWindow.Width) / 2 + rectWorkArea.left;
-			int nY = (rectWorkArea.Height - rectWindow.Height) / 2 + rectWorkArea.top;
-			
-			PInvokeWindows.MoveWindow(_hwnd, nX, nY, rectWindow.Width, rectWindow.Height, false);
-#elif GTKMONO
-			int screen_width = PInvokeGTK.gdk_screen_width();
-			int screen_height = PInvokeGTK.gdk_screen_height();
-
-			int window_width, window_height;
-			PInvokeGTK.gtk_window_get_size(_gtkwindow, out window_width, out window_height);
-
-			int nX = (screen_width - window_width) / 2;
-			int nY = (screen_height - window_height) / 2;
-
-			PInvokeGTK.gtk_window_move(_gtkwindow, nX, nY);
-#elif OSX
+#if OSX
 			_nsview.Window.Center();
+#else
+			if(OperatingSystem.IsWindows())
+			{
+				PInvokeUtils.RECT rectWindow;
+				PInvokeWindows.GetWindowRect(_hwnd, out rectWindow);
+
+				PInvokeUtils.RECT rectWorkArea = new PInvokeUtils.RECT();
+				PInvokeWindows.SystemParametersInfo(PInvokeWindows.SPI_GETWORKAREA, 0, ref rectWorkArea, 0);
+
+				int nX = (rectWorkArea.Width - rectWindow.Width) / 2 + rectWorkArea.left;
+				int nY = (rectWorkArea.Height - rectWindow.Height) / 2 + rectWorkArea.top;
+
+				PInvokeWindows.MoveWindow(_hwnd, nX, nY, rectWindow.Width, rectWindow.Height, false);
+			}
+			else if(OperatingSystem.IsLinux())
+			{
+				int screen_width = PInvokeGTK.gdk_screen_width();
+				int screen_height = PInvokeGTK.gdk_screen_height();
+
+				int window_width, window_height;
+				PInvokeGTK.gtk_window_get_size(_gtkwindow, out window_width, out window_height);
+
+				int nX = (screen_width - window_width) / 2;
+				int nY = (screen_height - window_height) / 2;
+
+				PInvokeGTK.gtk_window_move(_gtkwindow, nX, nY);
+			}
 #endif
 		}
 
@@ -219,17 +217,23 @@ namespace SciterSharp
 		/// <returns>SIZE measures of the screen of primary monitor</returns>
 		public static PInvokeUtils.SIZE GetPrimaryMonitorScreenSize()
 		{
-#if WINDOWS
-			int nScreenWidth = PInvokeWindows.GetSystemMetrics(PInvokeWindows.SystemMetric.SM_CXSCREEN);
-			int nScreenHeight = PInvokeWindows.GetSystemMetrics(PInvokeWindows.SystemMetric.SM_CYSCREEN);
-			return new PInvokeUtils.SIZE() { cx = nScreenWidth, cy = nScreenHeight };
-#elif GTKMONO
-			int screen_width = PInvokeGTK.gdk_screen_width();
-			int screen_height = PInvokeGTK.gdk_screen_height();
-			return new PInvokeUtils.SIZE() { cx = screen_width, cy = screen_height };
-#elif OSX
+#if OSX
 			var sz = NSScreen.MainScreen.Frame.Size;
 			return new PInvokeUtils.SIZE((int)sz.Width, (int)sz.Height);
+#else
+			if(OperatingSystem.IsWindows())
+			{
+				int nScreenWidth = PInvokeWindows.GetSystemMetrics(PInvokeWindows.SystemMetric.SM_CXSCREEN);
+				int nScreenHeight = PInvokeWindows.GetSystemMetrics(PInvokeWindows.SystemMetric.SM_CYSCREEN);
+				return new PInvokeUtils.SIZE() { cx = nScreenWidth, cy = nScreenHeight };
+			}
+			if(OperatingSystem.IsLinux())
+			{
+				int screen_width = PInvokeGTK.gdk_screen_width();
+				int screen_height = PInvokeGTK.gdk_screen_height();
+				return new PInvokeUtils.SIZE() { cx = screen_width, cy = screen_height };
+			}
+			throw new PlatformNotSupportedException();
 #endif
 		}
 
@@ -237,16 +241,18 @@ namespace SciterSharp
 		{
 			get
 			{
-#if WINDOWS
-				IntPtr hmonitor = PInvokeWindows.MonitorFromWindow(_hwnd, PInvokeWindows.MONITOR_DEFAULTTONEAREST);
-				PInvokeWindows.MONITORINFO mi = new PInvokeWindows.MONITORINFO() { cbSize = Marshal.SizeOf(typeof(PInvokeWindows.MONITORINFO)) };
-				PInvokeWindows.GetMonitorInfo(hmonitor, ref mi);
-				return new PInvokeUtils.SIZE(mi.rcMonitor.Width, mi.rcMonitor.Height);
-#elif GTKMONO
-				return new PInvokeUtils.SIZE();
-#elif OSX
+#if OSX
 				var sz = _nsview.Window.Screen.Frame.Size;
 				return new PInvokeUtils.SIZE((int)sz.Width, (int)sz.Height);
+#else
+				if(OperatingSystem.IsWindows())
+				{
+					IntPtr hmonitor = PInvokeWindows.MonitorFromWindow(_hwnd, PInvokeWindows.MONITOR_DEFAULTTONEAREST);
+					PInvokeWindows.MONITORINFO mi = new PInvokeWindows.MONITORINFO() { cbSize = Marshal.SizeOf(typeof(PInvokeWindows.MONITORINFO)) };
+					PInvokeWindows.GetMonitorInfo(hmonitor, ref mi);
+					return new PInvokeUtils.SIZE(mi.rcMonitor.Width, mi.rcMonitor.Height);
+				}
+				return new PInvokeUtils.SIZE();// TODO Linux: not implemented
 #endif
 			}
 		}
@@ -255,17 +261,23 @@ namespace SciterSharp
 		{
 			get
 			{
-#if WINDOWS
-				PInvokeUtils.RECT rectWindow;
-				PInvokeWindows.GetWindowRect(_hwnd, out rectWindow);
-				return new PInvokeUtils.SIZE { cx = rectWindow.Width, cy = rectWindow.Height };
-#elif GTKMONO
-				int window_width, window_height;
-				PInvokeGTK.gtk_window_get_size(_gtkwindow, out window_width, out window_height);
-				return new PInvokeUtils.SIZE(window_width, window_height);
-#elif OSX
+#if OSX
 				var sz = _nsview.Window.Frame.Size;
 				return new PInvokeUtils.SIZE { cx = (int)sz.Width, cy = (int)sz.Height };
+#else
+				if(OperatingSystem.IsWindows())
+				{
+					PInvokeUtils.RECT rectWindow;
+					PInvokeWindows.GetWindowRect(_hwnd, out rectWindow);
+					return new PInvokeUtils.SIZE { cx = rectWindow.Width, cy = rectWindow.Height };
+				}
+				if(OperatingSystem.IsLinux())
+				{
+					int window_width, window_height;
+					PInvokeGTK.gtk_window_get_size(_gtkwindow, out window_width, out window_height);
+					return new PInvokeUtils.SIZE(window_width, window_height);
+				}
+				throw new PlatformNotSupportedException();
 #endif
 			}
 		}
@@ -274,27 +286,30 @@ namespace SciterSharp
 		{
 			get
 			{
-#if WINDOWS
-				PInvokeUtils.RECT rectWindow;
-				PInvokeWindows.GetWindowRect(_hwnd, out rectWindow);
-				return new PInvokeUtils.POINT(rectWindow.left, rectWindow.top);
-#elif GTKMONO
-				return new PInvokeUtils.POINT();
-#elif OSX
+#if OSX
 				var pos = _nsview.Window.Frame.Location;
 				return new PInvokeUtils.POINT((int)pos.X, (int)pos.Y);
+#else
+				if(OperatingSystem.IsWindows())
+				{
+					PInvokeUtils.RECT rectWindow;
+					PInvokeWindows.GetWindowRect(_hwnd, out rectWindow);
+					return new PInvokeUtils.POINT(rectWindow.left, rectWindow.top);
+				}
+				return new PInvokeUtils.POINT();// TODO Linux: not implemented
 #endif
 			}
 
 			set
 			{
-#if WINDOWS
-				PInvokeWindows.MoveWindow(_hwnd, value.X, value.Y, Size.cx, Size.cy, false);
-#elif GTKMONO
-				PInvokeGTK.gtk_window_move(_gtkwindow, value.X, value.Y);
-#elif OSX
+#if OSX
 				var pt = new CoreGraphics.CGPoint(value.X, value.Y);
 				_nsview.Window.SetFrameTopLeftPoint(pt);
+#else
+				if(OperatingSystem.IsWindows())
+					PInvokeWindows.MoveWindow(_hwnd, value.X, value.Y, Size.cx, Size.cy, false);
+				else if(OperatingSystem.IsLinux())
+					PInvokeGTK.gtk_window_move(_gtkwindow, value.X, value.Y);
 #endif
 			}
 		}
@@ -321,14 +336,19 @@ namespace SciterSharp
 
 		public void Show(bool show = true)
 		{
-#if WINDOWS
-			PInvokeWindows.ShowWindow(_hwnd, show ? PInvokeWindows.ShowWindowCommands.Show : PInvokeWindows.ShowWindowCommands.Hide);
-#elif GTKMONO
-			if(show)
-				PInvokeGTK.gtk_window_present(_gtkwindow);
-			else
-				PInvokeGTK.gtk_widget_hide(_hwnd);
-#elif OSX
+#if !OSX
+			if(OperatingSystem.IsWindows())
+			{
+				PInvokeWindows.ShowWindow(_hwnd, show ? PInvokeWindows.ShowWindowCommands.Show : PInvokeWindows.ShowWindowCommands.Hide);
+			}
+			else if(OperatingSystem.IsLinux())
+			{
+				if(show)
+					PInvokeGTK.gtk_window_present(_gtkwindow);
+				else
+					PInvokeGTK.gtk_widget_hide(_hwnd);
+			}
+#else
 			if(show)
 			{
 				_nsview.Window.MakeMainWindow();
@@ -351,12 +371,13 @@ namespace SciterSharp
 		/// </summary>
 		public void Close()
 		{
-#if WINDOWS
-			PInvokeWindows.PostMessage(_hwnd, PInvokeWindows.Win32Msg.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
-#elif GTKMONO
-			PInvokeGTK.gtk_window_close(_gtkwindow);
-#elif OSX
+#if OSX
 			_nsview.Window.Close();
+#else
+			if(OperatingSystem.IsWindows())
+				PInvokeWindows.PostMessage(_hwnd, PInvokeWindows.Win32Msg.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+			else if(OperatingSystem.IsLinux())
+				PInvokeGTK.gtk_window_close(_gtkwindow);
 #endif
 		}
 
@@ -364,12 +385,14 @@ namespace SciterSharp
 		{
 			get
 			{
-#if WINDOWS
-				return PInvokeWindows.IsWindowVisible(_hwnd);
-#elif GTKMONO
-				return PInvokeGTK.gtk_widget_get_visible(_gtkwindow) != 0;
-#elif OSX
+#if OSX
 				return _nsview.Window.IsVisible;
+#else
+				if(OperatingSystem.IsWindows())
+					return PInvokeWindows.IsWindowVisible(_hwnd);
+				if(OperatingSystem.IsLinux())
+					return PInvokeGTK.gtk_widget_get_visible(_gtkwindow) != 0;
+				throw new PlatformNotSupportedException();
 #endif
 			}
 		}
@@ -379,7 +402,7 @@ namespace SciterSharp
 			get { return _api.SciterGetVM(_hwnd); }
 		}*/
 
-#if WINDOWS
+#if WINDOWS // System.Drawing.Icon: net8.0-windows only
 		public Icon Icon
 		{
             // instead of using this property, you can use View.windowIcon on all platforms
@@ -398,31 +421,42 @@ namespace SciterSharp
 			set
 			{
 				Debug.Assert(_hwnd != IntPtr.Zero);
-#if WINDOWS
-				IntPtr strPtr = Marshal.StringToHGlobalUni(value);
-				PInvokeWindows.SendMessageW(_hwnd, PInvokeWindows.Win32Msg.WM_SETTEXT, IntPtr.Zero, strPtr);
-				Marshal.FreeHGlobal(strPtr);
-#elif GTKMONO
-				PInvokeGTK.gtk_window_set_title(_gtkwindow, value);
-#elif OSX
+#if OSX
 				_nsview.Window.Title = value;
+#else
+				if(OperatingSystem.IsWindows())
+				{
+					IntPtr strPtr = Marshal.StringToHGlobalUni(value);
+					PInvokeWindows.SendMessageW(_hwnd, PInvokeWindows.Win32Msg.WM_SETTEXT, IntPtr.Zero, strPtr);
+					Marshal.FreeHGlobal(strPtr);
+				}
+				else if(OperatingSystem.IsLinux())
+				{
+					PInvokeGTK.gtk_window_set_title(_gtkwindow, value);
+				}
 #endif
 			}
 
 			get
 			{
 				Debug.Assert(_hwnd != IntPtr.Zero);
-#if WINDOWS
-				IntPtr unmanagedPointer = Marshal.AllocHGlobal(2048);
-				IntPtr chars_copied = PInvokeWindows.SendMessageW(_hwnd, PInvokeWindows.Win32Msg.WM_GETTEXT, new IntPtr(2048), unmanagedPointer);
-				string title = Marshal.PtrToStringUni(unmanagedPointer, chars_copied.ToInt32());
-				Marshal.FreeHGlobal(unmanagedPointer);
-				return title;
-#elif GTKMONO
-				IntPtr str_ptr = PInvokeGTK.gtk_window_get_title(_gtkwindow);
-				return Marshal.PtrToStringAnsi(str_ptr);
-#elif OSX
+#if OSX
 				return _nsview.Window.Title;
+#else
+				if(OperatingSystem.IsWindows())
+				{
+					IntPtr unmanagedPointer = Marshal.AllocHGlobal(2048);
+					IntPtr chars_copied = PInvokeWindows.SendMessageW(_hwnd, PInvokeWindows.Win32Msg.WM_GETTEXT, new IntPtr(2048), unmanagedPointer);
+					string title = Marshal.PtrToStringUni(unmanagedPointer, chars_copied.ToInt32());
+					Marshal.FreeHGlobal(unmanagedPointer);
+					return title;
+				}
+				if(OperatingSystem.IsLinux())
+				{
+					IntPtr str_ptr = PInvokeGTK.gtk_window_get_title(_gtkwindow);
+					return Marshal.PtrToStringUTF8(str_ptr);// GTK strings are UTF-8
+				}
+				throw new PlatformNotSupportedException();
 #endif
 			}
 		}
@@ -535,7 +569,7 @@ namespace SciterSharp
 			return _api.SciterSetMediaVars(_hwnd, ref v);
 		}
 
-#if WINDOWS
+		// Windows only: window procedure given to SciterCreateWindow()
 		private IntPtr InternalProcessSciterWindowMessage(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam, IntPtr pParam, ref bool handled)
 		{
 			Debug.Assert(pParam.ToInt32() == 0);
@@ -559,6 +593,5 @@ namespace SciterSharp
 				return _hwnd;
 			}
 		}
-#endif
 	}
 }

@@ -18,6 +18,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using static SciterSharp.Interop.SciterX.FPTRs;
 
@@ -69,24 +71,52 @@ namespace SciterSharp.Interop
 		private static SciterXRequest.ISciterRequestAPI? _rapi = null;
 		//private static TIScript.ISciterTIScriptAPI? _tiapi = null;
 
-#if WINDOWS
+		/// <summary>
+		/// Windows only: load sciter64.dll / sciter32.dll (according to the process bitness) instead of sciter.dll.
+		/// Set it before the first use of the Sciter API. Ignored on other platforms.
+		/// </summary>
 		public static bool Use3264DLLNaming { get; set; }
 
+		// resolves to sciter.dll on Windows and libsciter.so on Linux (runtimes/<rid>/native/ of the NuGet package)
 		[DllImport("sciter", EntryPoint = "SciterAPI")]
 		private static extern IntPtr SciterAPI();
 
-		[DllImport("sciter32", EntryPoint = "SciterAPI")]
-		private static extern IntPtr SciterAPI32();
+		static SciterX()
+		{
+			NativeLibrary.SetDllImportResolver(typeof(SciterX).Assembly, ResolveNativeLibrary);
+		}
 
-		[DllImport("sciter64", EntryPoint = "SciterAPI")]
-		private static extern IntPtr SciterAPI64();
-#elif GTKMONO
-		[DllImport("sciter-gtk-64.so")]
-		private static extern IntPtr SciterAPI();
-#elif OSX
-		[DllImport("sciter-osx-64", EntryPoint = "SciterAPI")]
-		private static extern IntPtr SciterAPI64();
-#endif
+		private static IntPtr ResolveNativeLibrary(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
+		{
+			if(libraryName != "sciter")
+				return IntPtr.Zero;
+
+			IntPtr handle;
+			if(Use3264DLLNaming && OperatingSystem.IsWindows())
+			{
+				string name = Environment.Is64BitProcess ? "sciter64" : "sciter32";
+				if(NativeLibrary.TryLoad(name, assembly, searchPath, out handle))
+					return handle;
+			}
+
+			// Probe the app folder and the runtimes/<rid>/native layout (NuGet portable builds and ProjectReference builds)
+			// before the OS default search, which would also look in the current directory and PATH
+			string file = OperatingSystem.IsWindows() ? "sciter.dll" : "libsciter.so";
+			string rid = (OperatingSystem.IsWindows() ? "win" : OperatingSystem.IsLinux() ? "linux" : "osx") + "-" + RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant();
+			string asmdir = Path.GetDirectoryName(assembly.Location);
+			string[] candidates =
+			{
+				Path.Combine(AppContext.BaseDirectory, file),
+				Path.Combine(AppContext.BaseDirectory, "runtimes", rid, "native", file),
+				string.IsNullOrEmpty(asmdir) ? null : Path.Combine(asmdir, "runtimes", rid, "native", file),
+			};
+			foreach(var path in candidates)
+			{
+				if(path != null && File.Exists(path) && NativeLibrary.TryLoad(path, out handle))
+					return handle;
+			}
+			return IntPtr.Zero;// default probing
+		}
 
 		private static ISciterAPI LoadAPI()
 		{
@@ -95,36 +125,16 @@ namespace SciterSharp.Interop
 				int api_struct_size = Marshal.SizeOf(typeof(ISciterAPI));
 				IntPtr api_ptr;
 
-#if WINDOWS
 				if(IntPtr.Size == 8)
-				{
 					Debug.Assert(api_struct_size == ISciterAPI_SIZE);
-
-					if(Use3264DLLNaming)
-						api_ptr = SciterAPI64();
-					else
-						api_ptr = SciterAPI();
-				}
 				else
-				{
 					Debug.Assert(api_struct_size == ISciterAPI_SIZE / 2);
 
-					if(Use3264DLLNaming)
-						api_ptr = SciterAPI32();
-					else
-						api_ptr = SciterAPI();
-				}
-#elif GTKMONO
-				if(IntPtr.Size != 8)
-					throw new Exception("SciterSharp GTK/Mono only supports 64bits builds");
-
-				Debug.Assert(api_struct_size == 1304);
-				api_ptr = SciterAPI();
-#elif OSX
+#if OSX
+				// TODO macOS: verify the native name (libsciter.dylib) and the struct size
 				Debug.Assert(IntPtr.Size == 8);
-				//Debug.Assert(api_struct_size == 648 * 2);
-				api_ptr = SciterAPI64();
 #endif
+				api_ptr = SciterAPI();
 
 				_api = (ISciterAPI)Marshal.PtrToStructure(api_ptr, typeof(ISciterAPI));
 
@@ -205,10 +215,9 @@ namespace SciterSharp.Interop
 			public FPTR_SciterVersion SciterVersion;
 			public FPTR_SciterDataReady SciterDataReady;
 			public FPTR_SciterDataReadyAsync SciterDataReadyAsync;
-#if WINDOWS
+			// Windows only (NULL on other platforms)
 			public FPTR_SciterProc SciterProc;
 			public FPTR_SciterProcND SciterProcND;
-#endif
 			public FPTR_SciterLoadFile SciterLoadFile;
 			public FPTR_SciterLoadHtml SciterLoadHtml;
 			public FPTR_SciterSetCallback SciterSetCallback;
@@ -222,17 +231,14 @@ namespace SciterSharp.Interop
 			public FPTR_SciterCall SciterCall;
 			public FPTR_SciterEval SciterEval;
 			public FPTR_SciterUpdateWindow SciterUpdateWindow;
-#if WINDOWS
-			public FPTR_SciterTranslateMessage SciterTranslateMessage;
-#endif
+			public FPTR_SciterTranslateMessage SciterTranslateMessage;// Windows only
 			public FPTR_SciterSetOption SciterSetOption;
 			public FPTR_SciterGetPPI SciterGetPPI;
 			public FPTR_SciterGetViewExpando SciterGetViewExpando;
-#if WINDOWS
+			// Windows only
 			public FPTR_SciterRenderD2D SciterRenderD2D;
 			public FPTR_SciterD2DFactory SciterD2DFactory;
 			public FPTR_SciterDWFactory SciterDWFactory;
-#endif
 			public FPTR_SciterGraphicsCaps SciterGraphicsCaps;
 			public FPTR_SciterSetHomeURL SciterSetHomeURL;
 #if OSX
@@ -240,11 +246,7 @@ namespace SciterSharp.Interop
 #else
 			private IntPtr SciterCreateNSView;
 #endif
-#if GTKMONO
-			public FPTR_SciterCreateWidget SciterCreateWidget;
-#else
-			private IntPtr SciterCreateWidget;
-#endif
+			public FPTR_SciterCreateWidget SciterCreateWidget;// Linux only
 			public FPTR_SciterCreateWindow SciterCreateWindow;
 			public FPTR_SciterSetupDebugOutput SciterSetupDebugOutput;
 
@@ -395,11 +397,10 @@ namespace SciterSharp.Interop
 			public FPTR_GetSciterGraphicsAPI GetSciterGraphicsAPI;
 			public FPTR_GetSciterRequestAPI GetSciterRequestAPI;
 
-#if WINDOWS
+			// Windows only
 			public FPTR_SciterCreateOnDirectXWindow SciterCreateOnDirectXWindow;
 			public FPTR_SciterRenderOnDirectXWindow SciterRenderOnDirectXWindow;
 			public FPTR_SciterRenderOnDirectXTexture SciterRenderOnDirectXTexture;
-#endif
 
 			public FPTR_SciterProcX SciterProcX;
 
@@ -441,12 +442,10 @@ namespace SciterSharp.Interop
 			public delegate bool FPTR_SciterDataReady(IntPtr hwnd, [MarshalAs(UnmanagedType.LPWStr)] string uri, byte[] data, uint dataLength);
 			// BOOL	function(HWINDOW hwnd, LPCWSTR uri, LPCBYTE data, UINT dataLength, LPVOID requestId) SciterDataReadyAsync;
 			public delegate bool FPTR_SciterDataReadyAsync(IntPtr hwnd, string uri, byte[] data, uint dataLength, IntPtr requestId);
-#if WINDOWS
 			// LRESULT	function(HWINDOW hwnd, UINT msg, WPARAM wParam, LPARAM lParam) SciterProc;
 			public delegate IntPtr FPTR_SciterProc(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
 			// LRESULT	function(HWINDOW hwnd, UINT msg, WPARAM wParam, LPARAM lParam, BOOL* pbHandled) SciterProcND;
 			public delegate IntPtr FPTR_SciterProcND(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam, ref bool pbHandled);
-#endif
 			// BOOL	function(HWINDOW hWndSciter, LPCWSTR filename) SciterLoadFile;
 			public delegate bool FPTR_SciterLoadFile(IntPtr hwnd, [MarshalAs(UnmanagedType.LPWStr)] string filename);
 			// BOOL function(HWINDOW hWndSciter, LPCBYTE html, UINT htmlSize, LPCWSTR baseUrl) SciterLoadHtml;
@@ -473,24 +472,20 @@ namespace SciterSharp.Interop
 			public delegate bool FPTR_SciterEval(IntPtr hwnd, [MarshalAs(UnmanagedType.LPWStr)] string script, uint scriptLength, out SciterXValue.VALUE pretval);
 			// VOID	function(HWINDOW hwnd) SciterUpdateWindow;
 			public delegate bool FPTR_SciterUpdateWindow(IntPtr hwnd);
-#if WINDOWS
 			// BOOL	function(MSG* lpMsg) SciterTranslateMessage;
 			public delegate bool FPTR_SciterTranslateMessage(IntPtr lpMsg);// TODO: MSG
-#endif
 			// BOOL	function(HWINDOW hWnd, UINT option, UINT_PTR value ) SciterSetOption;
 			public delegate bool FPTR_SciterSetOption(IntPtr hwnd, SciterXDef.SCITER_RT_OPTIONS option, IntPtr value);
 			// VOID	function(HWINDOW hWndSciter, UINT* px, UINT* py) SciterGetPPI;
 			public delegate void FPTR_SciterGetPPI(IntPtr hwnd, ref uint px, ref uint py);
 			// BOOL	function(HWINDOW hwnd, VALUE* pval ) SciterGetViewExpando;
 			public delegate bool FPTR_SciterGetViewExpando(IntPtr hwnd, out SciterXValue.VALUE pval);
-#if WINDOWS
 			// BOOL	function(HWINDOW hWndSciter, ID2D1RenderTarget* prt) SciterRenderD2D;
 			public delegate bool FPTR_SciterRenderD2D(IntPtr hwnd, IntPtr prt);// TODO
 																			   // BOOL	function(ID2D1Factory ** ppf) SciterD2DFactory;
 			public delegate bool FPTR_SciterD2DFactory(IntPtr ppf);// TODO
 																   // BOOL	function(IDWriteFactory ** ppf) SciterDWFactory;
 			public delegate bool FPTR_SciterDWFactory(IntPtr ppf);// TODO
-#endif
 			// BOOL	function(LPUINT pcaps) SciterGraphicsCaps;
 			public delegate bool FPTR_SciterGraphicsCaps(ref uint pcaps);
 			// BOOL	function(HWINDOW hWndSciter, LPCWSTR baseUrl) SciterSetHomeURL;
@@ -499,10 +494,8 @@ namespace SciterSharp.Interop
 			// HWINDOW function( LPRECT frame ) SciterCreateNSView;// returns NSView*
 			public delegate IntPtr FPTR_SciterCreateNSView(ref PInvokeUtils.RECT frame);
 #endif
-#if GTKMONO
 			// HWINDOW SCFN( SciterCreateWidget )( LPRECT frame ); // returns GtkWidget
 			public delegate IntPtr FPTR_SciterCreateWidget(ref PInvokeUtils.RECT frame);
-#endif
 			// HWINDOW	function(UINT creationFlags, LPRECT frame, SciterWindowDelegate* delegt, LPVOID delegateParam, HWINDOW parent) SciterCreateWindow;
 			public delegate IntPtr FPTR_SciterCreateWindow(SciterXDef.SCITER_CREATE_WINDOW_FLAGS creationFlags, ref PInvokeUtils.RECT frame, SciterXDef.FPTR_SciterWindowDelegate delegt, IntPtr delegateParam, IntPtr parent);
 			//VOID	function(
@@ -814,14 +807,12 @@ namespace SciterSharp.Interop
 			// LPSciterRequestAPI SCFN(GetSciterRequestAPI )();
 			public delegate IntPtr FPTR_GetSciterRequestAPI();
 
-#if WINDOWS
 			// BOOL SCFN(SciterCreateOnDirectXWindow ) (HWINDOW hwnd, IDXGISwapChain* pSwapChain);
 			public delegate bool FPTR_SciterCreateOnDirectXWindow(IntPtr hwnd, IntPtr pSwapChain);
 			// BOOL SCFN(SciterRenderOnDirectXWindow ) (HWINDOW hwnd, HELEMENT elementToRenderOrNull, BOOL frontLayer);
 			public delegate bool FPTR_SciterRenderOnDirectXWindow(IntPtr hwnd, IntPtr elementToRenderOrNull, bool frontLayer);
 			// BOOL SCFN(SciterRenderOnDirectXTexture ) (HWINDOW hwnd, HELEMENT elementToRenderOrNull, IDXGISurface* surface);
 			public delegate bool FPTR_SciterRenderOnDirectXTexture(IntPtr hwnd, IntPtr elementToRenderOrNull, IntPtr surface);
-#endif
 
 			// BOOL SCFN(SciterProcX)(HWINDOW hwnd, SCITER_X_MSG* pMsg ); // returns TRUE if handled
 			public delegate bool FPTR_SciterProcX(IntPtr hwnd, IntPtr pMsg);

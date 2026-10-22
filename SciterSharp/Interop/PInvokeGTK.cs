@@ -15,16 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with SciterSharp.  If not, see <http://www.gnu.org/licenses/>.
 
-#if true
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Versioning;
 
 namespace SciterSharp.Interop
 {
+	[SupportedOSPlatform("linux")]
 	public static class PInvokeGTK
 	{
 		[DllImport("libgtk-3.so.0", CallingConvention = CallingConvention.Cdecl)]
@@ -73,4 +74,3 @@ namespace SciterSharp.Interop
 		public static extern int gtk_window_set_icon_from_file(IntPtr window, [MarshalAs(UnmanagedType.LPStr)]string title, IntPtr err);
 	}
 }
-#endif

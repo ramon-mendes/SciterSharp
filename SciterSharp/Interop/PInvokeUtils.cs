@@ -29,18 +29,24 @@ namespace SciterSharp.Interop
 	{
 		public static void RunMsgLoop()
 		{
-#if WINDOWS
-			PInvokeWindows.MSG msg;
-			while(PInvokeWindows.GetMessage(out msg, IntPtr.Zero, 0, 0) != 0)
+			if(OperatingSystem.IsWindows())
 			{
-				PInvokeWindows.TranslateMessage(ref msg);
-				PInvokeWindows.DispatchMessage(ref msg);
+				PInvokeWindows.MSG msg;
+				while(PInvokeWindows.GetMessage(out msg, IntPtr.Zero, 0, 0) != 0)
+				{
+					PInvokeWindows.TranslateMessage(ref msg);
+					PInvokeWindows.DispatchMessage(ref msg);
+				}
 			}
-#elif GTKMONO
-			PInvokeGTK.gtk_main();
-#elif OSX
-            throw new Exception("Do not call PInvokeUtils.RunMsgLoop() on OSX.");
-#endif
+			else if(OperatingSystem.IsLinux())
+			{
+				PInvokeGTK.gtk_main();
+			}
+			else
+			{
+				// TODO macOS: OSX apps run the NSApplication loop, do not call PInvokeUtils.RunMsgLoop() there
+				throw new PlatformNotSupportedException("PInvokeUtils.RunMsgLoop() is only supported on Windows and Linux");
+			}
 		}
 
 		// PInvoke marshaling utils ===============================================================

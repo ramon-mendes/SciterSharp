@@ -9,7 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solutio
 		OmniCode-Settings.json = OmniCode-Settings.json
 		open-on-load.yml = open-on-load.yml
 		README.md = README.md
-		SciterSharp\SciterSharpOSX.nuspec = SciterSharp\SciterSharpOSX.nuspec
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2ABBA2EF-6FEE-4F81-BF64-A1AB02BEE2C5}"
@@ -19,7 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2ABBA2EF
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SciterSharp", "SciterSharp", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SciterSharpWindows", "SciterSharp\SciterSharpWindows.csproj", "{764F59DA-6288-CD15-2791-6F43F396A43D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SciterSharp", "SciterSharp\SciterSharp.csproj", "{764F59DA-6288-CD15-2791-6F43F396A43D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCore", "Tests\TestCoreApp\TestCore.csproj", "{252D97AE-2781-6C3C-5EB2-540953E56397}"
 EndProject

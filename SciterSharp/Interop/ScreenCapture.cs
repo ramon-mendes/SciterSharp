@@ -1,4 +1,4 @@
-#if WINDOWS
+﻿#if WINDOWS // System.Drawing: net8.0-windows only
 using System;
 using System.Runtime.InteropServices;
 using System.Drawing;

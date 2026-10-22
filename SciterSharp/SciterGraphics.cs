@@ -23,8 +23,8 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using SciterSharp.Interop;
-#if WINDOWS
 using System.Drawing;
+#if WINDOWS
 using System.Drawing.Imaging;
 #elif OSX
 using Foundation;
@@ -59,7 +59,6 @@ namespace SciterSharp
 		public static RGBAColor Black = new RGBAColor(0, 0, 0);
 		public static RGBAColor Invalid = new RGBAColor(-1, -1, -1);
 
-#if WINDOWS
 		public static RGBAColor FromColor(Color clr)
 		{
 			return new RGBAColor(clr.R, clr.G, clr.B, clr.A);
@@ -69,7 +68,6 @@ namespace SciterSharp
 		{
 			return _gapi.RGBA(clr.R, clr.G, clr.B, clr.A);
 		}
-#endif
 	}
 
 	public class SciterGraphics : IDisposable
@@ -373,7 +371,7 @@ namespace SciterSharp
 			_himg = himg;
 		}
 
-#if WINDOWS
+#if WINDOWS // System.Drawing.Bitmap: net8.0-windows only
 		public SciterImage(Bitmap bmp)
 		{
 			var data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppPArgb);

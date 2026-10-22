@@ -91,10 +91,8 @@ namespace SciterSharp
 			if(IsObjectObject) what = "IsObjectObject";
 			if(IsObjectClass) what = "IsObjectClass";
 			if(IsObjectError) what = "IsObjectError";
-#if WINDOWS
 			if(IsDate)
 				what += " - " + GetDate().ToString();
-#endif
 			if(IsMap) what = "IsMap " + Regex.Replace(ToJSONString(), @"\t|\n|\r", "");
 
 			return what;// + " - SciterValue JSON: " + Regex.Replace(ToJSONString(), @"\t|\n|\r", "");
@@ -466,14 +464,12 @@ namespace SciterSharp
 			return Get(0.0);
 		}
 
-#if WINDOWS || OSX
 		public DateTime GetDate()
 		{
 			long v;
 			_api.ValueInt64Data(ref _data, out v);
 			return DateTime.FromFileTime(v);
 		}
-#endif
 		
 		public static SciterValue FromJSONString(string json, SciterXValue.VALUE_STRING_CVT_TYPE ct = SciterXValue.VALUE_STRING_CVT_TYPE.CVT_JSON_LITERAL)
 		{

@@ -3,15 +3,13 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using SciterSharp;
 
+[assembly: AssemblyTitle("SciterSharpJS")]
+[assembly: AssemblyProduct("SciterSharpJS")]
+
 #if WINDOWS
-	[assembly: AssemblyTitle("SciterSharpWindows")]
-	[assembly: AssemblyProduct("SciterSharpWindows")]
-#elif GTKMONO
-	[assembly: AssemblyTitle("SciterSharpGTK")]
-	[assembly: AssemblyProduct("SciterSharpGTK")]
-#elif OSX
-	[assembly: AssemblyTitle("SciterSharpOSX")]
-	[assembly: AssemblyProduct("SciterSharpOSX")]
+// GenerateAssemblyInfo is off, so declare what the SDK would generate for the net8.0-windows target
+[assembly: System.Runtime.Versioning.TargetPlatform("windows7.0")]
+[assembly: System.Runtime.Versioning.SupportedOSPlatform("windows7.0")]
 #endif
 
 [assembly: AssemblyDescription("C# bindings for the Sciter engine")]

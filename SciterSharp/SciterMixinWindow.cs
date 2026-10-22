@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Win32;
@@ -16,22 +17,22 @@ namespace SciterSharp
 	{
         public void CreateTopLevelWindow(PInvokeUtils.RECT frame, SciterXDef.SCITER_CREATE_WINDOW_FLAGS creationFlags = DefaultCreateFlags, IntPtr owner = default)
         {
-			if (owner != default)
+			if (owner != default && OperatingSystem.IsWindows())
 			{
-                if (PInvoke.IsWindow((HWND)owner) == false)
+                if (PInvokeWindows.IsWindow(owner) == false)
                     throw new ArgumentException("Invalid owner window handle");
             }
 
             CreateWindow(frame, creationFlags, owner);
         }
 
-#if WINDOWS
+        [SupportedOSPlatform("windows")]
         public void CreateChildWindow(PInvokeUtils.RECT frame, IntPtr parent)
         {
             if (parent == default)
                 throw new ArgumentException("Invalid parent window handle");
 
-            if (PInvoke.IsWindow((HWND)parent) == false)
+            if (PInvokeWindows.IsWindow(parent) == false)
                 throw new ArgumentException("Invalid parent window");
 
 #if false
@@ -43,7 +44,6 @@ namespace SciterSharp
             CreateWindow(frame, flags, parent);
 #endif
         }
-#endif
 
         /*
 		/// <summary>
@@ -61,6 +61,7 @@ namespace SciterSharp
 			// Sciter BUG: window comes with WM_EX_APPWINDOW style
 		}*/
 
+        [SupportedOSPlatform("windows5.0")]
         private void RegisterClass()
 		{
 			string className = "scitersharp-frame";

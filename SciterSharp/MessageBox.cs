@@ -15,14 +15,15 @@ namespace SciterSharp
 	{
 		public static void Show(IntPtr owner, string text, string caption)
 		{
-#if WINDOWS
-			PInvokeWindows.MessageBox(owner, text, caption, PInvokeWindows.MessageBoxOptions.OkOnly | PInvokeWindows.MessageBoxOptions.IconExclamation);
-#elif OSX
+#if OSX
 			NSAlert alert = new NSAlert();
 			alert.MessageText = text;
 			alert.RunModal();
-#elif GTKMONO
-			throw new Exception("MessageBox.Show not implemented in GTK");
+#else
+			if(OperatingSystem.IsWindows())
+				PInvokeWindows.MessageBox(owner, text, caption, PInvokeWindows.MessageBoxOptions.OkOnly | PInvokeWindows.MessageBoxOptions.IconExclamation);
+			else
+				throw new PlatformNotSupportedException("MessageBox.Show is only implemented on Windows");
 #endif
 		}
 

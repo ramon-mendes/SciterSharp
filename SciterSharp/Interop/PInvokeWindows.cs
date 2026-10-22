@@ -15,16 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with SciterSharp.  If not, see <http://www.gnu.org/licenses/>.
 
-#if WINDOWS
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Versioning;
 
 namespace SciterSharp.Interop
 {
+	[SupportedOSPlatform("windows")]
 	public static class PInvokeWindows
 	{
 		// PInvoke enums ===============================================================
@@ -281,4 +282,3 @@ namespace SciterSharp.Interop
 		#endregion
 		}
 	}
-#endif

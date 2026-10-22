@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\SciterSharp\SciterSharpWindows.csproj" />
+    <ProjectReference Include="..\..\SciterSharp\SciterSharp.csproj" />
   </ItemGroup>
 
   <ItemGroup>
