@@ -5,23 +5,24 @@
 [![Publish NuGet](https://github.com/ramon-mendes/SciterSharp/actions/workflows/nuget.yml/badge.svg)](https://github.com/ramon-mendes/SciterSharp/actions/workflows/nuget.yml)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](https://github.com/ramon-mendes/SciterSharp/blob/master/LICENSE.md)
 
-C# bindings for the [Sciter](https://sciter.com/) C/C++ API. Build native Windows desktop apps with a UI written in HTML, CSS and JavaScript, rendered by Sciter.JS, and drive it from C#.
+C# bindings for the [Sciter](https://sciter.com/) C/C++ API. Build native desktop apps for Windows and Linux with a UI written in HTML, CSS and JavaScript, rendered by Sciter.JS, and drive it from C#.
 
 Sciter is a small embeddable HTML/CSS engine. It is not a browser, so your app ships without Chromium or Electron, and the native library is only a few MB.
 
 ## Install
 
-### From source
-
-```bash
-git clone https://github.com/ramon-mendes/SciterSharp.git
-```
-
-Open `SciterSharpJS.sln` in Visual Studio 2022 (or later) and build. Then add a project reference to `SciterSharp/SciterSharpWindows.csproj`:
-
 ### NuGet
 
-The `SciterSharpWindows` project generates a NuGet package on build (`GeneratePackageOnBuild`). The package includes the Sciter native libraries under `runtimes/`:
+```bash
+dotnet add package SciterSharpJS
+```
+
+The [`SciterSharpJS`](https://www.nuget.org/packages/SciterSharpJS) package has 2 targets:
+
+- `net8.0` — Windows and Linux. The library picks the platform code at runtime.
+- `net8.0-windows` — the same, plus the WinForms `SciterControl` and the `System.Drawing` helpers.
+
+The package includes the Sciter native libraries under `runtimes/`:
 
 | RID | Native library |
 |---|---|
@@ -30,7 +31,15 @@ The `SciterSharpWindows` project generates a NuGet package on build (`GeneratePa
 | `linux-x64` | `libsciter.so` |
 | `linux-arm64` | `libsciter.so` |
 
-The packages on nuget.org are outdated. The latest [`SciterSharpWindows`](https://www.nuget.org/packages/SciterSharpWindows) (3.0.0, October 2020) targets .NET Framework 4.5 and does not include `sciter.dll`. It was not built from the current `master`, so build the package from source until a new version is published.
+`SciterSharpJS` replaces the old `SciterSharpWindows`, `SciterSharpGTK` and `SciterSharpOSX` packages, which are no longer updated.
+
+### From source
+
+```bash
+git clone https://github.com/ramon-mendes/SciterSharp.git
+```
+
+Open `SciterSharpJS.sln` in Visual Studio 2022 (or later) and build. Then add a project reference to `SciterSharp/SciterSharp.csproj`.
 
 ## Quick start
 
@@ -47,8 +56,9 @@ class Program
     [STAThread]
     static void Main()
     {
-        // Required for drag and drop support
-        PInvokeWindows.OleInitialize(IntPtr.Zero);
+        // Required for drag and drop support on Windows
+        if (OperatingSystem.IsWindows())
+            PInvokeWindows.OleInitialize(IntPtr.Zero);
 
         var wnd = new SciterMixinWindow();
         wnd.CreateTopLevelWindow(new PInvokeUtils.RECT(800, 600));
@@ -100,15 +110,17 @@ class AppEventHandler : SciterEventHandler
 </html>
 ```
 
-For a complete sample, including how to pack the `res/` folder into the executable with `SciterArchive`, see [Tests/TestCoreApp](Tests/TestCoreApp).
+For a complete sample, including how to pack the `res/` folder into the executable with `SciterArchive`, see [Tests/TestCoreApp](https://github.com/ramon-mendes/SciterSharp/tree/master/Tests/TestCoreApp).
 
 ## Requirements
 
-- Windows 7 or later
 - .NET 8 SDK
-- Visual Studio 2022 or later
+- Windows 7 or later (x64 or x86), or Linux (x64 or arm64) with GTK 3
+- Visual Studio 2022 or later, if you build from source on Windows
 
-Your app must find `sciter.dll` at runtime. The NuGet package copies it from `runtimes/`. With a project reference, copy the correct DLL (x64 or x86) from `SciterSharp/runtimes/` next to your executable, or get it from the [Sciter.JS SDK](https://gitlab.com/sciter-engine/sciter-js-sdk).
+Linux support is new and has not been fully tested yet. macOS is not supported yet.
+
+Your app must find the Sciter native library (`sciter.dll` on Windows, `libsciter.so` on Linux) at runtime. The NuGet package and a project reference both copy it to your output under `runtimes/<rid>/native/`, and SciterSharp loads it from there. You can also put the library next to your executable, or get it from the [Sciter.JS SDK](https://gitlab.com/sciter-engine/sciter-js-sdk).
 
 To see Sciter error messages in the Visual Studio Output window, enable native debugging: **Project Properties > Debug > Enable native code debugging**. You can also subclass `SciterDebugOutputHandler` to route the messages yourself.
 
@@ -132,7 +144,7 @@ Main classes and their mapping to the Sciter SDK:
 | `SciterDebugOutputHandler` | Receive Sciter debug and console output |
 | `SciterRequest` | Request API |
 | `SciterGraphics`, `SciterImage`, `SciterPath`, `SciterText` | Graphics API (incomplete) |
-| `SciterSharp.WinForms.SciterControl` | WinForms control that hosts a Sciter child window |
+| `SciterSharp.WinForms.SciterControl` | WinForms control that hosts a Sciter child window (`net8.0-windows` only) |
 
 ## Contributing
 
@@ -148,6 +160,6 @@ I do not have much time to maintain this project. For commercial support or spec
 
 ## License
 
-SciterSharp is licensed under the [GNU General Public License v3.0](LICENSE.md).
+SciterSharp is licensed under the [GNU General Public License v3.0](https://github.com/ramon-mendes/SciterSharp/blob/master/LICENSE.md).
 
 Sciter itself is a separate product with its own license. Check the [Sciter license terms](https://sciter.com/prices/) before you ship your app.
