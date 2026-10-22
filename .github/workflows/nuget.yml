@@ -65,7 +65,7 @@ jobs:
         uses: NuGet/login@v1
         id: login
         with:
-          user: midiway # nuget.org profile name that owns the Trusted Publishing policy (not the email)
+          user: RamonMendes # nuget.org profile name of the Trusted Publishing policy creator (not the email)
 
       - name: Push to nuget.org
         if: steps.version.outputs.exists == 'false'
