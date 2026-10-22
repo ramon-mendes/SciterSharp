@@ -4,7 +4,7 @@
 [![Publish NuGet](https://github.com/ramon-mendes/SciterSharp/actions/workflows/nuget.yml/badge.svg)](https://github.com/ramon-mendes/SciterSharp/actions/workflows/nuget.yml)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](https://github.com/ramon-mendes/SciterSharp/blob/master/LICENSE.md)
 
-C# bindings for the [Sciter](https://sciter.com/) C/C++ API. Build native desktop apps for Windows and Linux with a UI written in HTML, CSS and JavaScript, rendered by Sciter.JS, and drive it from C#.
+C# bindings for the [Sciter](https://sciter.com/) C/C++ API
 
 Sciter is a small embeddable HTML/CSS/JavaScript engine, an alternative to Electron and Tauri for desktop apps. Unlike Electron, it does not bundle Chromium, and unlike Tauri, it does not depend on the system WebView: your app ships with a single native library, much smaller than a browser runtime.
 
