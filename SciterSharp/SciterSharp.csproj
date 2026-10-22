@@ -19,7 +19,8 @@
     <!-- NuGet package -->
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>SciterSharpJS</PackageId>
-    <Version>3.0.2</Version><!-- keep in sync with LibVersion.AssemblyVersion -->
+    <!-- single source of truth: LibVersion.AssemblyVersion -->
+    <Version>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)LibVersion.cs')), 'AssemblyVersion\s*=\s*"([^"]+)"').Groups[1].Value)</Version>
     <Authors>Ramon F. Mendes</Authors>
     <Company>MI Software</Company>
     <Description>C# bindings for the Sciter.JS engine (Windows and Linux)</Description>
@@ -28,6 +29,7 @@
     <PackageProjectUrl>https://github.com/ramon-mendes/SciterSharp</PackageProjectUrl>
     <RepositoryUrl>https://github.com/ramon-mendes/SciterSharp</RepositoryUrl>
     <PackageTags>Sciter HTML C#</PackageTags>
+    <PackageIcon>sciter-sharp.png</PackageIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)'=='net8.0-windows'">
@@ -43,6 +45,7 @@
     <None Include="runtimes\linux-arm64\native\libsciter.so" Pack="true" PackagePath="runtimes/linux-arm64/native/" CopyToOutputDirectory="PreserveNewest" />
     <None Include="runtimes\linux-x64\native\libsciter.so" Pack="true" PackagePath="runtimes/linux-x64/native/" CopyToOutputDirectory="PreserveNewest" />
     <None Include="runtimes\win-x64\native\sciter.dll" Pack="true" PackagePath="runtimes/win-x64/native/" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\sciter-sharp.png" Pack="true" PackagePath="\" Visible="false" />
     <None Include="runtimes\win-x86\native\sciter.dll" Pack="true" PackagePath="runtimes/win-x86/native/" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

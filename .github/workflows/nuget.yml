@@ -1,0 +1,70 @@
+# Publishes the SciterSharpJS NuGet package.
+#
+# Release flow: bump LibVersion.AssemblyVersion in SciterSharp/LibVersion.cs and push to master.
+# The package version comes from that constant. If that version is already on nuget.org nothing is published.
+# Requires the repository secret NUGET_API_KEY (nuget.org API key with push rights for SciterSharpJS).
+
+name: Publish NuGet
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - SciterSharp/LibVersion.cs
+  workflow_dispatch:
+
+permissions:
+  contents: write # create the vX.Y.Z tag and GitHub release
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    env:
+      PACKAGE_ID: SciterSharpJS
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Read version
+        id: version
+        shell: pwsh
+        run: |
+          $m = Select-String -Path SciterSharp/LibVersion.cs -Pattern 'AssemblyVersion\s*=\s*"([^"]+)"'
+          if (-not $m) { throw "AssemblyVersion not found in SciterSharp/LibVersion.cs" }
+          $version = $m.Matches[0].Groups[1].Value
+          "version=$version" >> $env:GITHUB_OUTPUT
+
+          $id = $env:PACKAGE_ID.ToLowerInvariant()
+          $published = @()
+          try { $published = (Invoke-RestMethod "https://api.nuget.org/v3-flatcontainer/$id/index.json").versions } catch { }
+          $exists = $published -contains $version
+          "exists=$($exists.ToString().ToLower())" >> $env:GITHUB_OUTPUT
+          if ($exists) { "::notice::$env:PACKAGE_ID $version is already on nuget.org, skipping publish" }
+
+      - name: Pack
+        run: dotnet pack SciterSharp/SciterSharp.csproj -c Release -o out -p:GeneratePackageOnBuild=false -p:ContinuousIntegrationBuild=true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nupkg
+          path: out/*.nupkg
+
+      - name: Push to nuget.org
+        if: steps.version.outputs.exists == 'false'
+        shell: pwsh
+        run: dotnet nuget push "out/$env:PACKAGE_ID.${{ steps.version.outputs.version }}.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+      - name: Tag and GitHub release
+        if: steps.version.outputs.exists == 'false'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $v = "${{ steps.version.outputs.version }}"
+          gh release create "v$v" "out/$env:PACKAGE_ID.$v.nupkg" --target $env:GITHUB_SHA --title "SciterSharpJS $v" --generate-notes
