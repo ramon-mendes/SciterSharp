@@ -30,6 +30,7 @@
     <RepositoryUrl>https://github.com/ramon-mendes/SciterSharp</RepositoryUrl>
     <PackageTags>Sciter HTML C#</PackageTags>
     <PackageIcon>sciter-sharp.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)'=='net8.0-windows'">
@@ -46,6 +47,7 @@
     <None Include="runtimes\linux-x64\native\libsciter.so" Pack="true" PackagePath="runtimes/linux-x64/native/" CopyToOutputDirectory="PreserveNewest" />
     <None Include="runtimes\win-x64\native\sciter.dll" Pack="true" PackagePath="runtimes/win-x64/native/" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\sciter-sharp.png" Pack="true" PackagePath="\" Visible="false" />
+    <None Include="..\README.md" Pack="true" PackagePath="\" Visible="false" />
     <None Include="runtimes\win-x86\native\sciter.dll" Pack="true" PackagePath="runtimes/win-x86/native/" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

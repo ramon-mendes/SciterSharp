@@ -1,12 +1,13 @@
 # SciterSharp — Sciter.JS bindings for .NET
 
+[![NuGet](https://img.shields.io/nuget/v/SciterSharpJS.svg)](https://www.nuget.org/packages/SciterSharpJS)
+[![NuGet downloads](https://img.shields.io/nuget/dt/SciterSharpJS.svg)](https://www.nuget.org/packages/SciterSharpJS)
+[![Publish NuGet](https://github.com/ramon-mendes/SciterSharp/actions/workflows/nuget.yml/badge.svg)](https://github.com/ramon-mendes/SciterSharp/actions/workflows/nuget.yml)
+[![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](https://github.com/ramon-mendes/SciterSharp/blob/master/LICENSE.md)
+
 C# bindings for the [Sciter](https://sciter.com/) C/C++ API. Build native Windows desktop apps with a UI written in HTML, CSS and JavaScript, rendered by Sciter.JS, and drive it from C#.
 
 Sciter is a small embeddable HTML/CSS engine. It is not a browser, so your app ships without Chromium or Electron, and the native library is only a few MB.
-
-- **Engine:** Sciter.JS (JavaScript). The legacy TIScript engine lives on separate branches, see [Branches](#branches).
-- **Target framework:** `net8.0-windows`
-- **License:** [GPL-3.0](LICENSE.md)
 
 ## Install
 
